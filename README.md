@@ -7,14 +7,19 @@ Projet C pour le groupe 3 constitué de Chaka Ngameni, Romain Bozec, Vincent Rom
 ### Commandes envoyées par Central
 
 GETCASE(x, y): Récupère la valeur d'une case.
+
 SETCASE(x, y): Définit la valeur d'une case.
+
 INSERERLIGNE(ligne): Insère une ligne.
+
 SUPPRIMERLIGNE(x): Supprime une ligne.
+
 CREERCOPIE(): Créé une copie de la liste chainée à un temps T.
 
 ### Structure de données
 
 Liste chainée de T[Liste chainée à instant T, Liste chainée à instant T+1]
+
 Liste chainée à instant T[index, tableau-contenant-la-ligne, référence-vers-ligne-suivante]
 
 ### Déroulement au lancement
