@@ -1,3 +1,4 @@
+#include "../src/globals.h"
 #include "../src/modules/configparser.h"
 #include <stdio.h>
 #include <string.h>
