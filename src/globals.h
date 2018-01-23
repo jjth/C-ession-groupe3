@@ -1,5 +1,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
+#define TRUE 1
+#define FALSE 0
+
 typedef enum ModuleType ModuleType;
 
 enum ModuleType {
