@@ -60,3 +60,10 @@ dkms.conf
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# IDE
+.vscode
+
+#Project-specific
+config.ini
+build/

@@ -4,7 +4,7 @@ RM	=	rm -f
 all:	Central Pair Impair
 
 Central:	src/central.c
-	$(CC) -o build/Central src/central.c $(CFLAGS)
+	$(CC) -o build/Central lib/libini/ini.c src/modules/configparser.c src/central.c $(CFLAGS)
 
 Pair:		src/pair.c
 	$(CC) -c src/modules/dataStructure.c -o src/modules/dataStructure.o
@@ -14,8 +14,15 @@ Pair:		src/pair.c
 Impair:		src/impair.c
 	$(CC) -o build/Impair src/impair.c $(CFLAGS)
 
+test:
+	@$(CC) -o build/Test lib/libini/ini.c src/modules/configparser.c tests/config.c tests/main.c $(CFLAGS)
+	@$(RM) config.ini
+	@build/Test
+	@$(RM) config.ini
+
 clean:
 	$(RM) build/Central
 	$(RM) build/Pair
 	$(RM) build/Impair
-
+	$(RM) build/Test
+	$(RM) config.ini
