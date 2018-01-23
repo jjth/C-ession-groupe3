@@ -7,8 +7,9 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-
-char * get_color_from_code(int code);
-char *get_character(int x, int y);
+char get_character(int x, int y);
+void setColor(int code);
+void resetColor();
+int get_character_color(int x, int y);
 void display_line_separator(char separator, int number);
 void display_matrix(int X, int Y);
