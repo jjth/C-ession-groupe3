@@ -2,18 +2,18 @@
     #define WIN32 0
     #include <winsock2.h>
     typedef int socklen_t;
-// #elif defined (linux)
-//     #include <sys/types.h>
-//     #include <sys/socket.h>
-//     #include <netinet/in.h>
-//     #include <arpa/inet.h>
-//     #include <unistd.h>
-//     #define INVALID_SOCKET -1
-//     #define SOCKET_ERROR -1
-//     #define closesocket(s) close(s)
-//     typedef int SOCKET;
-//     typedef struct sockaddr_in SOCKADDR_IN;
-//     typedef struct sockaddr SOCKADDR;
+#elif defined (linux)
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+    #define INVALID_SOCKET -1
+    #define SOCKET_ERROR -1
+    #define closesocket(s) close(s)
+    typedef int SOCKET;
+    typedef struct sockaddr_in SOCKADDR_IN;
+    typedef struct sockaddr SOCKADDR;
 #endif
  
 #include <stdio.h>
@@ -36,10 +36,8 @@ int main(void)
     SOCKADDR_IN sin;
     SOCKET csock;
     SOCKADDR_IN csin;
-    char buffer[32] = ""; // Changer ici pour avoir l'envoi des lignes
-    printf("Entrez une chaine :\n");
-    fgets(buffer, sizeof(buffer), stdin);
-    printf("Chaine : %s.\n", buffer);
+    char buffer[32] = ""; // Changer 32 pour le nombre de colonnes
+    
 
     socklen_t recsize = sizeof(csin);
     int sock_err;
@@ -76,22 +74,39 @@ int main(void)
                     csock = accept(sock, (SOCKADDR*)&csin, &recsize);
                     printf("Un client se connecte avec la socket %d de %s:%d\n", csock, inet_ntoa(csin.sin_addr), htons(csin.sin_port));
  
+                    printf("Entrez une chaine :\n");
+                    fgets(buffer, sizeof(buffer), stdin);
+                    printf("Chaine : %s.\n", buffer);
+                    printf("Envoie de la chaine au client\n");
+                    
+                    //Changer 32 par le nombre de colonne
                     sock_err = send(csock, buffer, 32, 0);
+
+                    printf("La chaine est envoyé\n");
+
+                    // printf("Entrez une chaine :\n");
+                    // fgets(buffer, sizeof(buffer), stdin);
+                    // printf("Chaine : %s.\n", buffer);
+                    // printf("Envoie de la chaine au client\n");
+                    
+                    //Changer 32 par le nombre de colonne
+                    //sock_err = send(csock, buffer, 32, 0);
  
+                    //printf("La chaine est envoyé\n");
+
                     if(sock_err != SOCKET_ERROR)
                         printf("Chaine envoyée : %s\n", buffer);
                     else
                         printf("Erreur de transmission\n");
  
                     /* Il ne faut pas oublier de fermer la connexion (fermée dans les deux sens) */
-                    shutdown(csock, 2);
+                    //shutdown(csock, 2);
                 }
             }
  
             /* Fermeture de la socket */
             printf("Fermeture de la socket...\n");
             closesocket(sock);
-            printf("Fermeture du serveur terminee\n");
         }
  
         #if defined (WIN32)
