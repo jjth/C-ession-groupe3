@@ -4,12 +4,6 @@
 #include <stdbool.h>
 #include "readLines.h"
 
-int main(int argc, char const *argv[]){
-	
-	ask_lines();
-    return EXIT_SUCCESS;
-}
-
 void ask_lines(){
 	bool run = true;
 	int cpt = 1;
