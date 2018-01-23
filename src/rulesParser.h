@@ -41,7 +41,11 @@ struct element{
 	char* color; 
 	struct element *nxt;
 }; 
-typedef element* llist;
+
+typedef struct llist llist;
+struct llist {
+    element *first;
+};
 
 // main function
 void ask_rules();

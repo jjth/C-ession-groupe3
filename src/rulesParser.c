@@ -14,6 +14,7 @@ int main(int argc, char *argv[]){
 }
 
 void ask_rules(){
+	int nbEleme = 0;
 	// boolean to enter multiple rules
 	bool enterRules = true;
 	// bool logicOperatorUse = false;
