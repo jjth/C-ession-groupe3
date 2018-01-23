@@ -16,8 +16,8 @@ int main(int argc, char const *argv[]){
     setCharacter(myListing, 2,3,'z');
     displayListing(myListing,4);
     printf("%c \n",getCharacter(myListing, 2,3));
-    printf("%d \n",getColor(myListing, 2,3));
-    setColor(myListing,2,3,2);
+    printf("%d \n",getCharacterColor(myListing, 2,3));
+    setCharacterColor(myListing,2,3,2);
     displayListing(myListing,4);
     return 0;
 }
