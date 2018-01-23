@@ -25,7 +25,7 @@ void ask_rules(){
 	int valueLogicStructure;
 	int valueLogicOperator;
 	// list of rules 
-	llist listRules = NULL;
+	llist listRules = malloc(sizeof(llist));
 	int cptRules = 0;
 
 	printf("[-] Saisie des règles : \n");
