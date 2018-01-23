@@ -15,7 +15,7 @@ Impair:		src/impair.c
 	$(CC) -o build/Impair src/impair.c $(CFLAGS)
 
 test:
-	@$(CC) -o build/Test lib/libini/ini.c src/modules/configparser.c tests/config.c tests/main.c $(CFLAGS)
+	@$(CC) -o build/Test lib/libini/ini.c src/modules/configparser.c src/modules/colors.c tests/config.c tests/colors.c tests/main.c $(CFLAGS)
 	@$(RM) config.ini
 	@build/Test
 	@$(RM) config.ini
