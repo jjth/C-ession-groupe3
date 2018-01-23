@@ -115,7 +115,7 @@ char getCharacter(ListingLine *listingLine, int idLine,int idCharacter){
     }
     return -1;
 }
-int getColor(ListingLine *listingLine, int idLine,int idColor){
+int getCharacterColor(ListingLine *listingLine, int idLine,int idColor){
     if (listingLine == NULL){
         exit(EXIT_FAILURE);
     }
@@ -141,7 +141,7 @@ void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c){
     	current = current->next;
     }
 }
-void setColor(ListingLine *listingLine, int idLine,int idColor,int c){
+void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c){
     int size = 0;
     if (listingLine == NULL){
         exit(EXIT_FAILURE);
