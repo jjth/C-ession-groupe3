@@ -1,0 +1,173 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+#define SIZE 4
+#define RESET 0
+
+typedef struct Line Line;
+struct Line {
+    int id;
+    int* colors;
+    char* line;
+    Line *next;
+};
+
+typedef struct Ti Ti;
+struct Ti {
+	int id;
+	Line* line;
+	Ti *next;
+};
+
+typedef struct ListingLine ListingLine;
+struct ListingLine {
+    Line *first;
+};
+
+typedef struct ListingTi ListingTi;
+struct ListingTi {
+    Ti *first;
+};
+
+ListingLine *initialisationLine(int id, char c0, char c1, char c2, char c3) {
+    ListingLine *listingLine = malloc(sizeof(*listingLine));
+    Line *line = malloc(sizeof(*line));
+
+    if (listingLine == NULL || line == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }else{
+    	line->id = id;
+    	line->colors = malloc(sizeof(int)*SIZE);
+    	line->colors[0] = RESET;
+    	line->colors[1] = RESET;
+    	line->colors[2] = RESET;
+    	line->colors[3] = RESET;
+    	line->line = malloc(sizeof(char)*SIZE);
+    	line->line[0] = c0;
+    	line->line[1] = c1;
+    	line->line[2] = c2;
+    	line->line[3] = c3;
+    	line->next = NULL;
+    	listingLine->first = line;
+    	return listingLine;
+    }
+}
+
+void addALine(ListingLine *listingLine, int id, char c0, char c1, char c2, char c3){
+    Line *new = malloc(sizeof(*new));
+    if (listingLine == NULL || new == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }else {
+	    new->id = id;
+	    new->colors = malloc(sizeof(int)*SIZE);
+	    new->colors[0] = RESET;
+    	new->colors[1] = RESET;
+    	new->colors[2] = RESET;
+    	new->colors[3] = RESET;
+    	new->line = malloc(sizeof(char)*SIZE);
+	    new->line[0] = c0;
+    	new->line[1] = c1;
+    	new->line[2] = c2;
+    	new->line[3] = c3;
+	    new->next = listingLine->first;
+	    listingLine->first = new;    	
+    }
+}
+
+int deleteALine(ListingLine *listingLine, int id){
+	Line *previous = NULL;
+    Line *current = NULL;
+	if (listingLine->first->next != NULL && listingLine->first->id != id){
+        previous = listingLine->first;
+        current = previous->next;
+        while(current->id != id && current != NULL){
+        	previous = current;
+        	current = previous->next;
+        }
+        if(current != NULL){
+        	previous->next=current->next;
+        	free(current);
+        	return 0;
+        }else{
+        	return -1;
+        }
+    }else{
+    	if(listingLine->first->next == NULL){
+    		return -1;
+    	}
+    	if(listingLine->first->id == id){
+    		current=listingLine->first;
+    		current=current->next;
+    		free(listingLine->first);
+    		listingLine->first = current;
+    		return 0;
+    	}
+    }
+    return -1;
+}
+void displayListing(ListingLine *listingLine){
+	int compteur = 0;
+    if (listingLine == NULL){
+        exit(EXIT_FAILURE);
+    }
+    Line *current = listingLine->first;
+    while (current != NULL){
+        printf("%d\n",current->id);
+        for (compteur = 0;compteur<SIZE;compteur++){
+        	printf("%d, ",current->colors[compteur]);
+        }
+        printf("\n");
+        for (compteur = 0;compteur<SIZE;compteur++){
+        	printf("%c, ",current->line[compteur]);
+        }
+        printf("\n");
+        current = current->next;
+    }
+}
+
+char getCharacter(ListingLine *listingLine, int idLine,int idCharacter){
+	if (listingLine == NULL){
+        exit(EXIT_FAILURE);
+    }
+    Line *current = listingLine->first;
+    while(current != NULL){
+    	if(current->id == idLine){
+    		return current->line[idCharacter];
+    	}
+    	current = current->next;
+    }
+    return -1;
+}
+void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c){
+	int size = 0;
+	if (listingLine == NULL){
+        exit(EXIT_FAILURE);
+    }
+    Line *current = listingLine->first;
+    while(current != NULL){
+    	if(current->id == idLine){
+    		current->line[idCharacter] = c;
+    	}
+    	current = current->next;
+    }
+}
+
+int main(int argc, char const *argv[]){
+	ListingLine *myListing = initialisationLine(0,'X','X','X','X');
+    addALine(myListing, 1,'X','X','X','Y');
+    addALine(myListing, 2,'X','X','Y','Y');
+    addALine(myListing, 3,'X','Y','Y','Y');
+    addALine(myListing, 4,'Y','Y','Y','Y');
+    displayListing(myListing);
+    deleteALine(myListing,0);
+    displayListing(myListing);
+    setCharacter(myListing, 2,3,'z');
+    displayListing(myListing);
+    printf("%c \n",getCharacter(myListing, 2,3));
+    return 0;
+}
+    
