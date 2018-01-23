@@ -7,9 +7,9 @@ Central:	src/central.c
 	$(CC) -o build/Central src/central.c $(CFLAGS)
 
 Pair:		src/pair.c
-	$(CC) -c src/dataStructure.c
-	$(CC) -c src/pair.c
-	$(CC) src/pair.o src/dataStructure.o -o build/Pair $(CFLAGS)
+	$(CC) -c src/modules/dataStructure.c -o src/modules/dataStructure.o
+	$(CC) -c src/pair.c -o src/pair.o
+	$(CC) src/pair.o src/modules/dataStructure.o -o build/Pair $(CFLAGS)
 
 Impair:		src/impair.c
 	$(CC) -o build/Impair src/impair.c $(CFLAGS)

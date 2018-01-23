@@ -1,4 +1,4 @@
-#include "dataStructure.h"
+#include "modules/dataStructure.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
