@@ -1,4 +1,4 @@
-#define SIZE 4
+
 #define RESET 0
 
 
@@ -27,9 +27,11 @@ struct ListingTi {
     Ti *first;
 };
 
-ListingLine *initialisationLine(int id, char c0, char c1, char c2, char c3);
-void addALine(ListingLine *listingLine, int id, char c0, char c1, char c2, char c3);
+ListingLine *initialisationLine(int size,int id, char c0, char c1, char c2, char c3);
+void addALine(ListingLine *listingLine, int size, int id, char c0, char c1, char c2, char c3);
 int deleteALine(ListingLine *listingLine, int id);
-void displayListing(ListingLine *listingLine);
+void displayListing(ListingLine *listingLine, int size);
 char getCharacter(ListingLine *listingLine, int idLine,int idCharacter);
 void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c);
+void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c);
+int getCharacterColor(ListingLine *listingLine, int idLine,int idColor);
