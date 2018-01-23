@@ -33,5 +33,5 @@ int deleteALine(ListingLine *listingLine, int id);
 void displayListing(ListingLine *listingLine, int size);
 char getCharacter(ListingLine *listingLine, int idLine,int idCharacter);
 void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c);
-void setColor(ListingLine *listingLine, int idLine,int idColor,int c);
-int getColor(ListingLine *listingLine, int idLine,int idColor);
+void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c);
+int getCharacterColor(ListingLine *listingLine, int idLine,int idColor);
