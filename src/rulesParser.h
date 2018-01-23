@@ -51,15 +51,15 @@ struct llist {
 void ask_rules();
 
 // list manipulation 
-llist add_at_the_end(llist list, int id, rule* rule, char* color);
-element* research_element(llist list, int id);
-llist erase_list(llist list);
-void print_list(llist liste);
+void add_at_the_end(llist* list, int id, rule* rule, char* color);
+element* research_element(llist* list, int id);
+llist* erase_list(llist* list);
+void print_list(llist* liste);
 
 // check rule 
 LogicStructure parse_logic_structure(int response);
 LogicOperator parse_logic_operator(int response);
-void set_rule(rule* rule, llist list, int id);
+void set_rule(rule* rule, llist* list, int id);
 bool check_new_rules(char* response);
 
 // str manipulation 

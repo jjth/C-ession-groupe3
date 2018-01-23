@@ -25,21 +25,27 @@ void ask_rules(){
 	int valueLogicStructure;
 	int valueLogicOperator;
 	// list of rules 
-	llist listRules = malloc(sizeof(llist));
+	llist* listRules = malloc(sizeof(llist));
+	listRules->first = NULL;
+
 	int cptRules = 0;
 
 	printf("[-] Saisie des règles : \n");
 
 	while(enterRules){
-		printf("\t[-] Saisie d'une nouvelle règle : \n");	
+		printf("\t[-] Saisie d'une nouvelle règle : \n");
+
 		rule* current_rule = malloc(sizeof(rule));
-		current_rule->charA = '0';
+		current_rule->charA = '0';	
 		current_rule->logicStructureB = malloc(sizeof(LogicStructure)*2);
 		current_rule->numberC = malloc(sizeof(int)*2);
 		current_rule->charD = malloc(sizeof(char)*2);
 		current_rule->numberE = malloc(sizeof(int)*2);
 		current_rule->logicOperatorF = EMPTY;
 		current_rule->charG = '0';
+			
+	
+		
 		
 		int cptCondition = 0;
 		bool logicOperatorUse = false;
@@ -147,9 +153,9 @@ LogicOperator parse_logic_operator(int response){
 	}
 }
 
-void set_rule(rule* rule, llist list, int id){
+void set_rule(rule* rule, llist* list, int id){
 	// TODO : Jean set color here 
-	list = add_at_the_end(list, id, rule, "blue");
+	add_at_the_end(list, id, rule, "blue");
 	printf("[-] Affichage des règles enregistrées : \n");
 	print_list(list);
 	
@@ -212,8 +218,8 @@ char *str_strip (char* string){
    return strip;
 }
 
-element* research_element(llist list, int id){
-    element *tmp=list;
+element* research_element(llist* list, int id){
+    element *tmp=list->first;
     // loop of element in list
     while(tmp != NULL){
         if(tmp->id == id){
@@ -226,57 +232,47 @@ element* research_element(llist list, int id){
     return element;
 }
 
-llist erase_list(llist list){
+llist* erase_list(llist* list){
     if(list == NULL){
         // If list is null nothing to erase
         return NULL;
     }else{
         // Erase first element and return rest of the list 
-        element *tmp;
-        tmp = list->nxt;
-        free(list);
-        return erase_list(tmp);
+        element *tmp = list->first;
+        list->first = tmp->nxt;
+        free(tmp);
+        return erase_list(list);
     }
 }
 
-llist add_at_the_end(llist list, int id, rule* rule, char* color){
+void add_at_the_end(llist* list, int id, rule* rule, char* color){
     // Create new element
     element* newElement = malloc(sizeof(element));
- 
     // add values to the new element 
     newElement->id = id;
     newElement->rule = rule;
     newElement->color = color;	
     newElement->nxt = NULL;
-
-    if(list == NULL){
+    if(list->first == NULL){
         /* if list is NULL return element */
-		list = newElement;
-		printf("TEST PUTAIN BIS");
+		list->first = newElement;
     }else{
         /* Otherwise loop through the list and add the element at the end when the last element is null */
-        printf("TEST PUTAIN");
-		element* tmp=list;
-		printf("list->id : %d\n", list->id);
-		print_rule_fr(tmp);
+		element* tmp=list->first;
         while(tmp->nxt != NULL){
             tmp = tmp->nxt;
         }
         tmp->nxt = newElement;
 		
     }
-
-	return list;
 }
 
-void print_list(llist list){
-    element *tmp = list;
+void print_list(llist* list){
+    element *tmp = list->first;
 	int cpt = 0;
     /* while not end of the list */
     while(tmp != NULL){
-		printf("cpt : %d\n", cpt);
-		cpt++;
-		printf("id : %d\n", tmp->id);
+    	printf("test--->\n");
         /* print element  */
 		print_rule_fr(tmp);
         /* switch to next element  */
