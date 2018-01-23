@@ -60,7 +60,7 @@ void print_list(llist* liste);
 LogicStructure parse_logic_structure(int response);
 LogicOperator parse_logic_operator(int response);
 void set_rule(rule* rule, llist* list, int id);
-bool check_new_rules(char* response);
+int check_new_rules(char* response);
 
 // str manipulation 
 char *str_strip (char* string);

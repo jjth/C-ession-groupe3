@@ -6,6 +6,7 @@
 #include "modules/configparser.h"
 #include "modules/colors.h"
 #include "modules/readLines.h"
+#include "modules/rulesParser.h"
 
 #define LINE_SIZE 5
 #define NB_LINE 5
@@ -163,7 +164,19 @@ int main(int argc, char const *argv[])
     ///////// POLL USER
     ///////// 
     //////////////////////////
-    ask_lines();
 
+    // TODO: SCANF: LIGNE PAR LIGNE:
+    // 
+    int* matrixSize;
+    matrixSize = ask_lines();
+    // OU CHEMIN DU FICHIER A CHARGER
+
+    printf("Taille de la matrice: [%dx%d]\n", matrixSize[0], matrixSize[1]);
+    // TODO:
+    // Demander les rules (rulesParser)
+    ask_rules();
+
+    // Algo final de remplacement
+    // & display de Chaka
 	return 0;
 }
