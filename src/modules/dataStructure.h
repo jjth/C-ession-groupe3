@@ -30,8 +30,10 @@ struct ListingTi {
 ListingLine *initialisationLine(int size,int id, char c0, char c1, char c2, char c3);
 void addALine(ListingLine *listingLine, int size, int id, char c0, char c1, char c2, char c3);
 int deleteALine(ListingLine *listingLine, int id);
-void displayListing(ListingLine *listingLine, int size);
+void displayListingValue(ListingLine *listingLine, int size);
+void displayListingColor(ListingLine *listingLine, int size);
 char getCharacter(ListingLine *listingLine, int idLine,int idCharacter);
 void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c);
 void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c);
 int getCharacterColor(ListingLine *listingLine, int idLine,int idColor);
+int getNeighbors(ListingLine *myListing,int nbLine,int nbColunm,int x,int y,int d,char t);
