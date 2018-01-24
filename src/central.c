@@ -7,6 +7,7 @@
 #include "modules/colors.h"
 #include "modules/readLines.h"
 #include "modules/rulesParser.h"
+#include "modules/readFile.h"
 
 #define LINE_SIZE 5
 #define NB_LINE 5
@@ -54,7 +55,18 @@ void print_error(const char* format, ...) {
 
     va_end(args);
 }
-
+/*
+void send_to_network(char* line, int id){
+	// TODO : VINCENT SEND DATA TO CLIENT 
+	if((id%2)==0){
+		//send to pair 
+		printf("Send line to pair client\n");
+	}else{
+		//send to impair 
+		printf("Send line to impair client\n");
+	}
+}
+*/
 int main(int argc, char const *argv[])
 {
     //////////////////////////
@@ -179,7 +191,47 @@ int main(int argc, char const *argv[])
     if (useFile == 'n' || useFile == 'N') {
         matrixSize = ask_lines();
     } else {
-        // OU CHEMIN DU FICHIER A CHARGER
+        char fileName[256];
+        char* newLinePosition;
+        int file_read_ok = FALSE;
+
+        printf("Veuillez glisser-déposer votre fichier dans cette fenêtre ");
+        printf("puis cliquer sur la touche [Entrée] de votre clavier pour continuer.\n");
+
+        while (file_read_ok == FALSE) {
+            // While the user didn't type a correct file name.
+            while (fgets(fileName, 256, stdin) == NULL) {
+                printf("Erreur dans la saisie, veuillez réésayer.\n");
+            }
+
+            // Remove the "\n" at the end of the string
+            newLinePosition = strchr(fileName, '\n');
+
+            if (newLinePosition != NULL) {
+                *newLinePosition = '\0';
+            }
+
+            file_read fileRead = openFile(fileName);
+
+            if (fileRead.err.id == ERROR_NONE) {
+                file_read_ok = TRUE;
+            } else {
+                printf("Impossible d'ouvrir ce fichier. %s\n", fileRead.err.message);
+
+                int i = 1;
+                char* line;
+                do {
+                    line = readLine(fileRead);
+                    if (line != NULL && strcmp(line, "") != 0) {
+                        send_to_network(line, i);
+                    }
+                    
+                } while(line != NULL && strcmp(line, "") != 0);
+            }
+
+            // OU CHEMIN DU FICHIER A CHARGER
+        }
+
     }
 
     printf("Taille de la matrice: [%dx%d]\n", matrixSize[0], matrixSize[1]);
