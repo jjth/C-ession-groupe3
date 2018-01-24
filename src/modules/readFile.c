@@ -23,7 +23,6 @@ file_read openFile(char* fileName) {
 
     char* line = malloc(MAX_LINE*sizeof(char*));
 
-    int lineSize = MAX_LINE;
     int nbColumns = -1;
 
     file_read* pfile = &file;
@@ -43,24 +42,18 @@ file_read openFile(char* fileName) {
                 perr->message = "Fichier inaccessible, veuillez réessayer.";
             }
         } else {
-            fgets(line, lineSize, file_pointer);
-            while (line[strlen(line) - 1] != '\n' || line[strlen(line) - 1] != '\r') {
-                char* tmp = realloc(line, lineSize + MAX_LINE);
+            char c;
 
-                if (!tmp) {
-                    perr->id = ERROR_MEMORY_ALLOCATION;
-                    perr->message = "Memory allocation failed";
+            nbColumns = 0;
 
-                    return file;
-                } else {
-                    line = tmp;
-                    lineSize += MAX_LINE;
-                    fseek(file_pointer,0,SEEK_SET);
-                    fgets(line, lineSize, file_pointer);
-                }
+            c = fgetc(file_pointer);
+
+            while (c != EOF && c != '\n') {
+                ++nbColumns;
+                c = fgetc(file_pointer);
             }
+
             fseek(file_pointer,0,SEEK_SET);
-            nbColumns = strlen(line);
 
             pfile->column_count = nbColumns;
             pfile->file = file_pointer;
@@ -83,8 +76,19 @@ char* readLine(file_read file) {
             if (!line) {
                 return NULL;
             } else {
-                if (fgets(line, file.column_count, file.file)) {
-                    return line;
+                if (fgets(line, file.column_count+2, file.file)) {
+                    if (line[strlen(line) - 1] == '\n' || line[strlen(line) - 1] == '\r' || line[strlen(line) - 1] == EOF) {
+                        // Strip-off unwanted characters
+                        char *p = strchr(line, '\n');
+                        if (p) *p = 0;
+                        p = strchr(line, '\r');
+                        if (p) *p = 0;
+                        p = strchr(line, EOF);
+                        if (p) *p = 0;
+                        return line;
+                    } else {
+                        return "";
+                    }
                 } else {
                     return "";
                 }

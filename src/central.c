@@ -191,11 +191,8 @@ int main(int argc, char const *argv[])
     if (useFile == 'n' || useFile == 'N') {
         matrixSize = ask_lines();
     } else {
-        /*char* fileName = malloc(sizeof(char*)*256);
-        char* newLinePosition;
-        char* afterCursor= malloc(sizeof(char*)*256);*/
+        matrixSize = malloc(sizeof(int)*2);
         int file_read_ok = FALSE;
-        //char c;
 
         printf("Veuillez glisser-déposer votre fichier dans cette fenêtre ");
         printf("puis cliquer sur la touche [Entrée] de votre clavier pour continuer.\n");
@@ -203,13 +200,10 @@ int main(int argc, char const *argv[])
         while (file_read_ok == FALSE) {
             char* fileName = scanfLine();
 
-            printf("%s\n", fileName);
             file_read fileRead = openFile(fileName);
 
             if (fileRead.err.id == ERROR_NONE) {
                 file_read_ok = TRUE;
-                // Set matrix size
-                printf("OK\n");
 
                 int i = 1;
                 char* line;
@@ -217,9 +211,13 @@ int main(int argc, char const *argv[])
                     line = readLine(fileRead);
                     if (line != NULL && strcmp(line, "") != 0) {
                         send_to_network(line, i);
+                        i++;
                     }
-                    printf("%s\n", line);
+
                 } while(line != NULL && strcmp(line, "") != 0);
+
+                matrixSize[0] = fileRead.column_count;
+                matrixSize[1] = i-1;
             } else {
                 printf("Impossible d'ouvrir ce fichier. %s\n", fileRead.err.message);
 
@@ -227,7 +225,6 @@ int main(int argc, char const *argv[])
 
             // OU CHEMIN DU FICHIER A CHARGER
         }
-
     }
 
     printf("Taille de la matrice: [%dx%d]\n", matrixSize[0], matrixSize[1]);

@@ -10,7 +10,6 @@ int* ask_lines(){
 	int cpt = 1;
 	int nbColumn = -1;
     int* matrixSize = malloc(sizeof(int)*2);
-    int i = 0;
 	printf("[-] Saisie de l'échéquier\n");
 	printf("\t[-] Saisisez le nombre de colonnes de l'échéquier : ");
     
@@ -24,7 +23,6 @@ int* ask_lines(){
 	printf("\t[-] Saisissez les lignes de l'échéquier : \n");
 	
 	char* line = malloc(sizeof(char)*nbColumn);
-    char c = -1;
 
     while(run) {
         printf("\t\t[-] Ligne n°%d (ligne vide pour arrêter) : ", cpt);
