@@ -16,6 +16,41 @@ char *strsep(char **stringp, const char *delim) {
 }
 #endif
 
+char* prepare_for_send(CommandType type, char* data) {
+    long new_str_size = strlen(data) + 10;
+    char* final_str = malloc(sizeof(char*)*new_str_size);
+
+    switch(type) {
+        case CMD_SEND_LINE:
+            strcpy(final_str, __CMD_SEND_LINE);
+            break;
+        case CMD_RESET:
+            strcpy(final_str, __CMD_RESET);
+            break;
+        case CMD_GET_CHAR:
+            strcpy(final_str, __CMD_GET_CHAR);
+            break;
+        case CMD_SET_CHAR:
+            strcpy(final_str, __CMD_SET_CHAR);
+            break;
+        case CMD_GET_COLOR:
+            strcpy(final_str, __CMD_GET_COLOR);
+            break;
+        case CMD_SET_COLOR:
+            strcpy(final_str, __CMD_SET_COLOR);
+            break;
+        case CMD_TIME_NEW:
+            strcpy(final_str, __CMD_TIME_NEW);
+            break;
+        default:
+            strcpy(final_str, "");
+    }
+
+    strcat(final_str, data);
+
+    return final_str;
+}
+
 CommandType get_command(char* string) {
     if (strlen(string) < 10) {
         return CMD_UNKNOWN;
