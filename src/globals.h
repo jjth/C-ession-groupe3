@@ -14,11 +14,14 @@ enum ModuleType {
 typedef enum ErrorType ErrorType;
 
 enum ErrorType {
-    ERROR_NONE,
-    ERROR_FILE_NOT_READABLE,
+    ERROR_NONE, //0
+    ERROR_OPERATION_NOT_PERMITTED, //1
+    ERROR_FILE_NOT_FOUND, //2
+    ERROR_FILE_NOT_READABLE, //3
     ERROR_FILE_NOT_WRITABLE,
     ERROR_FILE_WRITE_FAIL,
-    ERROR_INI_PARSE_FAIL
+    ERROR_INI_PARSE_FAIL,
+    ERROR_MEMORY_ALLOCATION
 };
 
 typedef struct {
