@@ -76,10 +76,10 @@ void deinit_client() {
 #endif
 }
 
-error send_to_network(NetworkClientConnection conn, char* line) {
+error send_to_network(NetworkClientConnection conn, const char* line) {
     error err = {ERROR_NONE, ""};
     error* perr = &err;
-
+    printf("%d\n", conn.socket);
     if(send(conn.socket, line, strlen(line), 0) < 0) {
         perr->id = errno;
         perr->message = strerror(errno);

@@ -2,18 +2,19 @@
 #include <stdio.h>
 #include <string.h>
 #include "../globals.h"
+#include "client.h"
 #include "readLines.h"
 #include "scanf.h"
-#include "client.h"
 
-int* ask_lines(NetworkClientConnection conn_pair, NetworkClientConnection conn_impair){
+int* ask_lines(NetworkClientConnection* conn_pair, NetworkClientConnection* conn_impair){
 	int run = TRUE;
 	int cpt = 1;
 	int nbColumn = -1;
     int* matrixSize = malloc(sizeof(int)*2);
+
 	printf("[-] Saisie de l'échéquier\n");
 	printf("\t[-] Saisisez le nombre de colonnes de l'échéquier : ");
-    
+
     while ((nbColumn = scanfInt()) < 1) {
         if (nbColumn == -1) {
             printf("Ceci n'est pas un nombre, veuillez réessayer : ");
@@ -24,7 +25,7 @@ int* ask_lines(NetworkClientConnection conn_pair, NetworkClientConnection conn_i
 	printf("\t[-] Saisissez les lignes de l'échéquier : \n");
 	
 	char* line = malloc(sizeof(char)*nbColumn);
-    NetworkClientConnection conn_temp;
+    NetworkClientConnection* conn_temp;
     while(run) {
         printf("\t\t[-] Ligne n°%d (ligne vide pour arrêter) : ", cpt);
 
@@ -37,11 +38,11 @@ int* ask_lines(NetworkClientConnection conn_pair, NetworkClientConnection conn_i
                 conn_temp = conn_impair;
             }
 
-            error err = send_to_network(conn_temp, line);
+            error err = send_to_network(*conn_temp, line);
 
             while (err.id != ERROR_NONE) {
                 printf("Impossible d'envoyer cette ligne: %s\n", err.message);
-                err = send_to_network(conn_temp, line);
+                err = send_to_network(*conn_temp, line);
             }
             cpt += 1;
         } else if (strlen(line) == 0) {

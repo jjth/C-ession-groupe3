@@ -5,11 +5,11 @@
 #include "globals.h"
 #include "modules/configparser.h"
 #include "modules/colors.h"
+#include "modules/client.h"
 #include "modules/readLines.h"
 #include "modules/rulesParser.h"
 #include "modules/readFile.h"
 #include "modules/scanf.h"
-#include "modules/client.h"
 
 #define LINE_SIZE 5
 #define NB_LINE 5
@@ -157,7 +157,7 @@ int main(int argc, char const *argv[])
     }
 
     if (useFile == 'n' || useFile == 'N') {
-        matrixSize = ask_lines();
+        matrixSize = ask_lines(&conn_pair, &conn_impair);
     } else {
         matrixSize = malloc(sizeof(int)*2);
         int file_read_ok = FALSE;

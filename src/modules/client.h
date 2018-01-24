@@ -2,11 +2,8 @@
 #define CLIENT_H
 
 #if defined(WIN32) || defined(WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
-
 #include <winsock2.h>
-
 #else
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -35,9 +32,8 @@ typedef struct {
     SOCKET socket;
 } NetworkClientConnection;
 
-
 error init_client(void);
 NetworkClientConnection connect_client(const char* ip, int port);
 void deinit_client();
-error send_to_network(NetworkClientConnection conn, char* line);
+error send_to_network(NetworkClientConnection conn, const char* line);
 #endif /* guard */
