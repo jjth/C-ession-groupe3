@@ -1,62 +1,165 @@
-/*
-    C ECHO client example using sockets
-*/
-#include<stdio.h> //printf
-#include<string.h>    //strlen
-#include<sys/socket.h>    //socket
-#include<arpa/inet.h> //inet_addr
- 
-int main(int argc , char *argv[])
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+
+#include "client.h"
+
+static void init(void)
 {
-    int sock;
-    struct sockaddr_in server;
-    char message[1000] , server_reply[2000];
-     
-    //Create socket
-    sock = socket(AF_INET , SOCK_STREAM , 0);
-    if (sock == -1)
-    {
-        printf("Could not create socket");
-    }
-    puts("Socket created");
-     
-    server.sin_addr.s_addr = inet_addr("127.0.0.1");
-    server.sin_family = AF_INET;
-    server.sin_port = htons( 8888 );
- 
-    //Connect to remote server
-    if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
-    {
-        perror("connect failed. Error");
-        return 1;
-    }
-     
-    puts("Connected\n");
-     
-    //keep communicating with server
-    while(1)
-    {
-        printf("Enter message : ");
-        scanf("%s" , message);
-         
-        //Send some data
-        if( send(sock , message , strlen(message) , 0) < 0)
-        {
-            puts("Send failed");
-            return 1;
-        }
-         
-        //Receive a reply from the server
-        if( recv(sock , server_reply , 2000 , 0) < 0)
-        {
-            puts("recv failed");
+#ifdef WIN32
+   WSADATA wsa;
+   int err = WSAStartup(MAKEWORD(2, 2), &wsa);
+   if(err < 0)
+   {
+      puts("WSAStartup failed !");
+      exit(EXIT_FAILURE);
+   }
+#endif
+}
+
+static void end(void)
+{
+#ifdef WIN32
+   WSACleanup();
+#endif
+}
+
+static void app(const char *address, const char *name)
+{
+   SOCKET sock = init_connection(address);
+   char buffer[BUF_SIZE];
+
+   fd_set rdfs;
+
+   /* send our name */
+   write_server(sock, name);
+
+   while(1)
+   {
+      FD_ZERO(&rdfs);
+
+      /* add STDIN_FILENO */
+      FD_SET(STDIN_FILENO, &rdfs);
+
+      /* add the socket */
+      FD_SET(sock, &rdfs);
+
+      if(select(sock + 1, &rdfs, NULL, NULL, NULL) == -1)
+      {
+         perror("select()");
+         exit(errno);
+      }
+
+      /* something from standard input : i.e keyboard */
+      if(FD_ISSET(STDIN_FILENO, &rdfs))
+      {
+         fgets(buffer, BUF_SIZE - 1, stdin);
+         {
+            char *p = NULL;
+            p = strstr(buffer, "\n");
+            if(p != NULL)
+            {
+               *p = 0;
+            }
+            else
+            {
+               /* fclean */
+               buffer[BUF_SIZE - 1] = 0;
+            }
+         }
+         write_server(sock, buffer);
+      }
+      else if(FD_ISSET(sock, &rdfs))
+      {
+         int n = read_server(sock, buffer);
+         /* server down */
+         if(n == 0)
+         {
+            printf("Server disconnected !\n");
             break;
-        }
-         
-        puts("Server reply :");
-        puts(server_reply);
-    }
-     
-    close(sock);
-    return 0;
+         }
+         puts(buffer);
+      }
+   }
+
+   end_connection(sock);
+}
+
+static int init_connection(const char *address)
+{
+   SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+   SOCKADDR_IN sin = { 0 };
+   struct hostent *hostinfo;
+
+   if(sock == INVALID_SOCKET)
+   {
+      perror("socket()");
+      exit(errno);
+   }
+
+   hostinfo = gethostbyname(address);
+   if (hostinfo == NULL)
+   {
+      fprintf (stderr, "Unknown host %s.\n", address);
+      exit(EXIT_FAILURE);
+   }
+
+   sin.sin_addr = *(IN_ADDR *) hostinfo->h_addr;
+   sin.sin_port = htons(PORT);
+   sin.sin_family = AF_INET;
+
+   if(connect(sock,(SOCKADDR *) &sin, sizeof(SOCKADDR)) == SOCKET_ERROR)
+   {
+      perror("connect()");
+      exit(errno);
+   }
+
+   return sock;
+}
+
+static void end_connection(int sock)
+{
+   closesocket(sock);
+}
+
+static int read_server(SOCKET sock, char *buffer)
+{
+   int n = 0;
+
+   if((n = recv(sock, buffer, BUF_SIZE - 1, 0)) < 0)
+   {
+      perror("recv()");
+      exit(errno);
+   }
+
+   buffer[n] = 0;
+
+   return n;
+}
+
+static void write_server(SOCKET sock, const char *buffer)
+{
+   if(send(sock, buffer, strlen(buffer), 0) < 0)
+   {
+      perror("send()");
+      exit(errno);
+   }
+}
+
+int main(int argc, char **argv)
+{
+   if(argc < 2)
+   {
+      printf("Usage : %s [address] [pseudo]\n", argv[0]);
+      return EXIT_FAILURE;
+   }
+
+   init();
+
+   app(argv[1], argv[2]);
+
+   end();
+
+   return EXIT_SUCCESS;
 }

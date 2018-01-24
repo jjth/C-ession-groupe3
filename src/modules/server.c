@@ -1,120 +1,238 @@
-/*
-    C socket server example, handles multiple clients using threads
-*/
- 
-#include<stdio.h>
-#include<string.h>    //strlen
-#include<stdlib.h>    //strlen
-#include<sys/socket.h>
-#include<arpa/inet.h> //inet_addr
-#include<unistd.h>    //write
-#include<pthread.h> //for threading , link with lpthread
- 
-//the thread function
-void *connection_handler(void *);
- 
-int main(int argc , char *argv[])
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+
+#include "server.h"
+
+static void init(void)
 {
-    int socket_desc , client_sock , c , *new_sock;
-    struct sockaddr_in server , client;
-     
-    //Create socket
-    socket_desc = socket(AF_INET , SOCK_STREAM , 0);
-    if (socket_desc == -1)
-    {
-        printf("Could not create socket");
-    }
-    puts("Socket created");
-     
-    //Prepare the sockaddr_in structure
-    server.sin_family = AF_INET;
-    server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons( 8888 );
-     
-    //Bind
-    if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
-    {
-        //print the error message
-        perror("bind failed. Error");
-        return 1;
-    }
-    puts("bind done");
-     
-    //Listen
-    listen(socket_desc , 3);
-     
-    //Accept and incoming connection
-    puts("Waiting for incoming connections...");
-    c = sizeof(struct sockaddr_in);
-     
-     
-    //Accept and incoming connection
-    puts("Waiting for incoming connections...");
-    c = sizeof(struct sockaddr_in);
-    while( (client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
-    {
-        puts("Connection accepted");
-         
-        pthread_t sniffer_thread;
-        new_sock = malloc(1);
-        *new_sock = client_sock;
-         
-        if( pthread_create( &sniffer_thread , NULL ,  connection_handler , (void*) new_sock) < 0)
-        {
-            perror("could not create thread");
-            return 1;
-        }
-         
-        //Now join the thread , so that we dont terminate before the thread
-        //pthread_join( sniffer_thread , NULL);
-        puts("Handler assigned");
-    }
-     
-    if (client_sock < 0)
-    {
-        perror("accept failed");
-        return 1;
-    }
-     
-    return 0;
+#ifdef WIN32
+   WSADATA wsa;
+   int err = WSAStartup(MAKEWORD(2, 2), &wsa);
+   if(err < 0)
+   {
+      puts("WSAStartup failed !");
+      exit(EXIT_FAILURE);
+   }
+#endif
 }
- 
-/*
- * This will handle connection for each client
- * */
-void *connection_handler(void *socket_desc)
+
+static void end(void)
 {
-    //Get the socket descriptor
-    int sock = *(int*)socket_desc;
-    int read_size;
-    char *message , client_message[2000];
-     
-    //Send some messages to the client
-    message = "Greetings! I am your connection handler\n";
-    write(sock , message , strlen(message));
-     
-    message = "Now type something and i shall repeat what you type \n";
-    write(sock , message , strlen(message));
-     
-    //Receive a message from client
-    while( (read_size = recv(sock , client_message , 2000 , 0)) > 0 )
-    {
-        //Send the message back to client
-        write(sock , client_message , strlen(client_message));
-    }
-     
-    if(read_size == 0)
-    {
-        puts("Client disconnected");
-        fflush(stdout);
-    }
-    else if(read_size == -1)
-    {
-        perror("recv failed");
-    }
-         
-    //Free the socket pointer
-    free(socket_desc);
-     
-    return 0;
+#ifdef WIN32
+   WSACleanup();
+#endif
+}
+
+static void app(void)
+{
+   SOCKET sock = init_connection();
+   char buffer[BUF_SIZE];
+   /* the index for the array */
+   int actual = 0;
+   int max = sock;
+   /* an array for all clients */
+   Client clients[MAX_CLIENTS];
+
+   fd_set rdfs;
+
+   while(1)
+   {
+      int i = 0;
+      FD_ZERO(&rdfs);
+
+      /* add STDIN_FILENO */
+      FD_SET(STDIN_FILENO, &rdfs);
+
+      /* add the connection socket */
+      FD_SET(sock, &rdfs);
+
+      /* add socket of each client */
+      for(i = 0; i < actual; i++)
+      {
+         FD_SET(clients[i].sock, &rdfs);
+      }
+
+      if(select(max + 1, &rdfs, NULL, NULL, NULL) == -1)
+      {
+         perror("select()");
+         exit(errno);
+      }
+
+      /* something from standard input : i.e keyboard */
+      if(FD_ISSET(STDIN_FILENO, &rdfs))
+      {
+         /* stop process when type on keyboard */
+         break;
+      }
+      else if(FD_ISSET(sock, &rdfs))
+      {
+         /* new client */
+         SOCKADDR_IN csin = { 0 };
+         size_t sinsize = sizeof csin;
+         int csock = accept(sock, (SOCKADDR *)&csin, &sinsize);
+         if(csock == SOCKET_ERROR)
+         {
+            perror("accept()");
+            continue;
+         }
+
+         /* after connecting the client sends its name */
+         if(read_client(csock, buffer) == -1)
+         {
+            /* disconnected */
+            continue;
+         }
+
+         /* what is the new maximum fd ? */
+         max = csock > max ? csock : max;
+
+         FD_SET(csock, &rdfs);
+
+         Client c = { csock };
+         strncpy(c.name, buffer, BUF_SIZE - 1);
+         clients[actual] = c;
+         actual++;
+      }
+      else
+      {
+         int i = 0;
+         for(i = 0; i < actual; i++)
+         {
+            /* a client is talking */
+            if(FD_ISSET(clients[i].sock, &rdfs))
+            {
+               Client client = clients[i];
+               int c = read_client(clients[i].sock, buffer);
+               /* client disconnected */
+               if(c == 0)
+               {
+                  closesocket(clients[i].sock);
+                  remove_client(clients, i, &actual);
+                  strncpy(buffer, client.name, BUF_SIZE - 1);
+                  strncat(buffer, " disconnected !", BUF_SIZE - strlen(buffer) - 1);
+                  send_message_to_all_clients(clients, client, actual, buffer, 1);
+               }
+               else
+               {
+                  send_message_to_all_clients(clients, client, actual, buffer, 0);
+               }
+               break;
+            }
+         }
+      }
+   }
+
+   clear_clients(clients, actual);
+   end_connection(sock);
+}
+
+static void clear_clients(Client *clients, int actual)
+{
+   int i = 0;
+   for(i = 0; i < actual; i++)
+   {
+      closesocket(clients[i].sock);
+   }
+}
+
+static void remove_client(Client *clients, int to_remove, int *actual)
+{
+   /* we remove the client in the array */
+   memmove(clients + to_remove, clients + to_remove + 1, (*actual - to_remove - 1) * sizeof(Client));
+   /* number client - 1 */
+   (*actual)--;
+}
+
+static void send_message_to_all_clients(Client *clients, Client sender, int actual, const char *buffer, char from_server)
+{
+   int i = 0;
+   char message[BUF_SIZE];
+   message[0] = 0;
+   for(i = 0; i < actual; i++)
+   {
+      /* we don't send message to the sender */
+      if(sender.sock != clients[i].sock)
+      {
+         if(from_server == 0)
+         {
+            strncpy(message, sender.name, BUF_SIZE - 1);
+            strncat(message, " : ", sizeof message - strlen(message) - 1);
+         }
+         strncat(message, buffer, sizeof message - strlen(message) - 1);
+         write_client(clients[i].sock, message);
+      }
+   }
+}
+
+static int init_connection(void)
+{
+   SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+   SOCKADDR_IN sin = { 0 };
+
+   if(sock == INVALID_SOCKET)
+   {
+      perror("socket()");
+      exit(errno);
+   }
+
+   sin.sin_addr.s_addr = htonl(INADDR_ANY);
+   sin.sin_port = htons(PORT);
+   sin.sin_family = AF_INET;
+
+   if(bind(sock,(SOCKADDR *) &sin, sizeof sin) == SOCKET_ERROR)
+   {
+      perror("bind()");
+      exit(errno);
+   }
+
+   if(listen(sock, MAX_CLIENTS) == SOCKET_ERROR)
+   {
+      perror("listen()");
+      exit(errno);
+   }
+
+   return sock;
+}
+
+static void end_connection(int sock)
+{
+   closesocket(sock);
+}
+
+static int read_client(SOCKET sock, char *buffer)
+{
+   int n = 0;
+
+   if((n = recv(sock, buffer, BUF_SIZE - 1, 0)) < 0)
+   {
+      perror("recv()");
+      /* if recv error we disonnect the client */
+      n = 0;
+   }
+
+   buffer[n] = 0;
+
+   return n;
+}
+
+static void write_client(SOCKET sock, const char *buffer)
+{
+   if(send(sock, buffer, strlen(buffer), 0) < 0)
+   {
+      perror("send()");
+      exit(errno);
+   }
+}
+
+int main(int argc, char **argv)
+{
+   init();
+
+   app();
+
+   end();
+
+   return EXIT_SUCCESS;
 }
