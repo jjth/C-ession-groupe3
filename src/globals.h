@@ -3,6 +3,27 @@
 #define TRUE 1
 #define FALSE 0
 
+#define __CMD_SEND_LINE   "[%%]LINE  "
+#define __CMD_RESET       "[%%]RESET "
+#define __CMD_GET_CHAR    "[%%]GETCAR"
+#define __CMD_SET_CHAR    "[%%]SETCAR"
+#define __CMD_GET_COLOR   "[%%]GETCOL"
+#define __CMD_SET_COLOR   "[%%]SETCOL"
+#define __CMD_TIME_NEW    "[%%]NEWT0 "
+
+typedef enum CommandType CommandType;
+
+enum CommandType {
+    CMD_SEND_LINE,
+    CMD_RESET,
+    CMD_GET_CHAR,
+    CMD_SET_CHAR,
+    CMD_GET_COLOR,
+    CMD_SET_COLOR,
+    CMD_TIME_NEW,
+    CMD_UNKNOWN
+};
+
 typedef enum ModuleType ModuleType;
 
 enum ModuleType {
