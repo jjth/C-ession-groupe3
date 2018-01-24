@@ -87,11 +87,11 @@ void ask_rules(){
 					printf("\t\t\t[-] 3 - \"aucun\"\n");
 					printf("\t\t[-] Valeur choisie : ");
 					scanf(" %d", &valueLogicOperator);
-					current_rule->logicOperatorF = parse_logic_operator(valueLogicOperator);
+					current_rule->logicOperatorF[cptCondition] = parse_logic_operator(valueLogicOperator);
 
-				}while (current_rule->logicOperatorF == -1);
+				}while (current_rule->logicOperatorF[cptCondition] == -1);
 				
-				if(current_rule->logicOperatorF != EMPTY) logicOperatorUse = true;
+				if(current_rule->logicOperatorF[cptCondition] != EMPTY) logicOperatorUse = true;
 			}
 			cptCondition++;
 			
@@ -272,7 +272,6 @@ void print_list(llist* list){
 	int cpt = 0;
     /* while not end of the list */
     while(tmp != NULL){
-    	printf("test--->\n");
         /* print element  */
 		print_rule_fr(tmp);
         /* switch to next element  */
@@ -299,9 +298,9 @@ void print_rule_fr(element *element){
 			}else{
 				printf("\t\t[-] \tS'il y a \"%s\" caractère de type \"%c\" à \"%d\" de distance \n", logicStructFr, element->rule->charD[cpt], element->rule->numberE[cpt]);
 			}
-			if(element->rule->logicOperatorF != EMPTY && cpt < 1)
+			if(element->rule->logicOperatorF[cpt] != EMPTY && cpt < 1)
 			{
-				logicOperatorFr = translate_logic_operator(element->rule->logicOperatorF);
+				logicOperatorFr = translate_logic_operator(element->rule->logicOperatorF[cpt]);
 				printf("\t\t[-] \t\"%s\" \n",logicOperatorFr);
 				logicOperatorUse = true;
 			}
