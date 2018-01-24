@@ -81,14 +81,13 @@ int main(int argc, char const *argv[])
     // Try to load configuration and handle all use-cases
     if (conf.err.id == ERROR_NONE) {
         conf_fatal_error = FALSE; // Loading succeed
-    } else if (conf.err.id == ERROR_FILE_NOT_READABLE) {
-        printf("No configuration file found.");
-        // File not readable = potentially "file not found" so
-        // we'll try to create it.
+    } else if (conf.err.id == ERROR_FILE_NOT_FOUND) {
+        printf("Fichier de configuration introuvable.");
+        // File not found: create default configuration.
         error default_config_creation = create_default_config(MODULE_CENTRAL);
 
         if (default_config_creation.id == ERROR_NONE) { // config.ini file created successfully
-            printf(" Using default configuration.\n");
+            printf(" Utilisation de la configuration par défaut.\n");
 
             // Reload the configuration we've just created.
             conf = load_config(MODULE_CENTRAL);
@@ -96,14 +95,14 @@ int main(int argc, char const *argv[])
             if (conf.err.id == ERROR_NONE) {
                 conf_fatal_error = FALSE;
             } else {
-                print_error("Couldn't load the default configuration: %s", conf.err.message);
+                print_error("Impossible de charger la configuration par défaut: %s", conf.err.message);
             }
         } else { // Cannot create a file in this folder => insufficient rights.
-            print_error("\nCouldn't create a configuration file, please ask an administrator to verify");
-            print_error(" that you have sufficient rights in this folder.\n");
+            print_error("\nImpossible de créer le fichier de configuration, veuillez demander à un administrateur");
+            print_error(" de vérifier que vous avez des droits suffisants sur ce dossier.\n");
         }
     } else {
-        print_error("Couldn't load the configuration: %s", conf.err.message);
+        print_error("Impossible de charger la configuration: %s", conf.err.message);
     }
 
     if (conf_fatal_error == FALSE) {
@@ -112,7 +111,7 @@ int main(int argc, char const *argv[])
             strcmp(conf.impair.ip, "0.0.0.0") == 0 ||
             conf.impair.port == 0) {
             conf_fatal_error = TRUE;
-            print_error("Configuration is invalid, please contact your administrator.\n");
+            print_error("La configuration est invalide, veuillez contacter un administrateur.\n");
         }
     }
 
@@ -186,7 +185,7 @@ int main(int argc, char const *argv[])
 
     while(useFile != 'o' && useFile != 'O' && useFile != 'n' && useFile != 'N') {
         printf("Voulez-vous charger un fichier ? (O/N): ");
-        scanf("%c", &useFile);
+        useFile = scanfChar();
     }
 
     if (useFile == 'n' || useFile == 'N') {
@@ -210,8 +209,7 @@ int main(int argc, char const *argv[])
             if (fileRead.err.id == ERROR_NONE) {
                 file_read_ok = TRUE;
                 // Set matrix size
-            } else {
-                printf("Impossible d'ouvrir ce fichier. %s\n", fileRead.err.message);
+                printf("OK\n");
 
                 int i = 1;
                 char* line;
@@ -220,8 +218,11 @@ int main(int argc, char const *argv[])
                     if (line != NULL && strcmp(line, "") != 0) {
                         send_to_network(line, i);
                     }
-                    
+                    printf("%s\n", line);
                 } while(line != NULL && strcmp(line, "") != 0);
+            } else {
+                printf("Impossible d'ouvrir ce fichier. %s\n", fileRead.err.message);
+
             }
 
             // OU CHEMIN DU FICHIER A CHARGER

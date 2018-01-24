@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "../../lib/libini/ini.h"
 #include "configparser.h"
@@ -75,8 +76,13 @@ configuration load_config(ModuleType type) {
 
     if (error_ini_parse < 0) {
         if (error_ini_parse == -1) {
-            perr->id = ERROR_FILE_NOT_READABLE;
-            perr->message = "Le fichier de configuration n'a pas pu être ouvert.";
+            if (errno == ERROR_FILE_NOT_FOUND) {
+                perr->id = ERROR_FILE_NOT_FOUND;
+                perr->message = "Le fichier de configuration est introuvable.";
+            } else {
+                perr->id = ERROR_FILE_NOT_READABLE;
+                perr->message = "Le fichier de configuration n'a pas pu être ouvert (vérifiez les droits).";
+            }
         } else {
             perr->id = ERROR_INI_PARSE_FAIL;
             perr->message = "Le fichier de configuration est invalide ou corrompu.";
@@ -106,7 +112,7 @@ error create_default_config(ModuleType type) {
     } else {
         if (fprintf(f, "%s", default_config_string(type)) < 0) {
             err.id = ERROR_FILE_WRITE_FAIL;
-            err.message = "A unknown error has happened while writing the configuration file";
+            err.message = "Une erreur inconnue est apparue pendant l'écriture du fichier de configuration";
         }
 
         fclose(f);

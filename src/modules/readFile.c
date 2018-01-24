@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "readFile.h"
 #define MAX_LINE 2048
 
@@ -17,31 +18,32 @@ file_read openFile(char* fileName) {
         0,
         err
     };
-    printf("1\n");
+
     error* perr = &err;
-        printf("2\n");
+
     char* line = malloc(MAX_LINE*sizeof(char*));
-        printf("3\n");
+
     int lineSize = MAX_LINE;
     int nbColumns = -1;
-        printf("4\n");
+
     file_read* pfile = &file;
-    printf("5\n");
+
     if (!line) {
-            printf("6\n");
         perr->id = ERROR_MEMORY_ALLOCATION;
         perr->message = "Memory allocation failed";
     } else {
-            printf("7\n");
         FILE* file_pointer = fopen(fileName, "r");
-    printf("8\n");
 
         if (!file_pointer) {
-            perr->id = ERROR_FILE_NOT_READABLE;
-            perr->message = "The file couldn't be accessed, please check your path.";
+            if (errno == ERROR_FILE_NOT_FOUND) {
+                perr->id = ERROR_FILE_NOT_FOUND;
+                perr->message = "Fichier introuvable, veuillez réessayer.";
+            } else {
+                perr->id = ERROR_FILE_NOT_READABLE;
+                perr->message = "Fichier inaccessible, veuillez réessayer.";
+            }
         } else {
             fgets(line, lineSize, file_pointer);
-            
             while (line[strlen(line) - 1] != '\n' || line[strlen(line) - 1] != '\r') {
                 char* tmp = realloc(line, lineSize + MAX_LINE);
 
@@ -57,7 +59,6 @@ file_read openFile(char* fileName) {
                     fgets(line, lineSize, file_pointer);
                 }
             }
-
             fseek(file_pointer,0,SEEK_SET);
             nbColumns = strlen(line);
 
@@ -65,6 +66,8 @@ file_read openFile(char* fileName) {
             pfile->file = file_pointer;
             pfile->init_done = TRUE;
             }
+
+        pfile->err = *perr;
     }
 
     return file;

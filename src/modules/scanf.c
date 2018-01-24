@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include "../globals.h"
 #include "scanf.h"
 
@@ -26,10 +27,10 @@ int getch(void)
 }
 #endif
 
-char* scanfLine() {
-    char* scannedLine = malloc(sizeof(char*)*256);
-    // Empty input buffers;
-    char c = getchar();
+char* scanfLineWithMax(int maxLength) {
+    char* scannedLine = malloc(sizeof(char*)*maxLength);
+
+    char c;
     scannedLine[0] = '\0';
     int i = 0;
     int cursorPos = i;
@@ -43,7 +44,7 @@ char* scanfLine() {
                 int u = 0;
                 int addedChars = 0;
                 printf("\b");
-                while (o < i && scannedLine[o] != '\0' && o < 255) {
+                while (o < i && scannedLine[o] != '\0' && o < maxLength) {
                     scannedLine[u] = scannedLine[o];
 
                     if (o != (cursorPos -1)) {
@@ -85,7 +86,7 @@ char* scanfLine() {
             }
         }
 
-        if (i < 256 && skipChar == FALSE && c != '\n') {
+        if (i < maxLength && skipChar == FALSE && c != '\n') {
             putchar(c);
 
             int u = 0;
@@ -94,7 +95,7 @@ char* scanfLine() {
             if (cursorPos == i) {
                 scannedLine[i] = c;
             } else {
-                char* scannedLineCopy = malloc(sizeof(char*)*256);
+                char* scannedLineCopy = malloc(sizeof(char*)*maxLength);
                 strcpy(scannedLineCopy, scannedLine);
 
                 u = 0;
@@ -136,4 +137,36 @@ char* scanfLine() {
     printf("\n");
 
     return scannedLine;
+}
+
+char* scanfLine() {
+    return scanfLineWithMax(256);
+}
+
+char scanfChar() {
+    char* c = scanfLineWithMax(1);
+
+    return c[0];
+}
+
+int scanfInt() {
+    char* startPtr = scanfLine();
+    char* endPtr;
+
+    long result = strtol(startPtr, &endPtr, 10);
+    
+    if (strcmp(endPtr, "\0") == 0) {
+        // String parsed successfully
+        if (result <= INT_MAX) {
+            return (int) result;
+        } else {
+            return -1;
+        }
+    } else {
+        return -1;
+    }
+}
+
+void emptyBuffer() {
+    getchar();
 }

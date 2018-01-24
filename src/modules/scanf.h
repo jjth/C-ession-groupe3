@@ -10,5 +10,9 @@
 int getch(void);
 #endif
 
+char* scanfLineWithMax(int maxLength);
 char* scanfLine();
+char scanfChar();
+int scanfInt();
+void emptyBuffer();
 #endif

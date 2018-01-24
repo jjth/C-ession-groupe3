@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include "../globals.h"
 #include "rulesParser.h"
+#include "scanf.h"
 
 #define STR(s) #s
 #define XSTR(s) STR(s)
@@ -37,15 +38,12 @@ void ask_rules(){
 		current_rule->numberE = malloc(sizeof(int)*2);
 		current_rule->logicOperatorF = EMPTY;
 		current_rule->charG = '0';
-			
-	
-		
-		
+
 		int cptCondition = 0;
 		int logicOperatorUse = FALSE;
 
 		printf("\t\t[-] Caractère à modifier : ");
-		scanf(" %c", &current_rule->charA);
+		current_rule->charA = scanfChar();
 		
 		// ask for the differents conditions
 		do{
@@ -57,21 +55,33 @@ void ask_rules(){
 				printf("\t\t\t[-] 3 - \"exactement\"\n");
 				printf("\t\t\t[-] 4 - \"aucun\"\n");
 				printf("\t\t[-] Valeur choisie : ");
-				scanf(" %d", &valueLogicStructure);
+				valueLogicStructure = scanfInt();
 				current_rule->logicStructureB[cptCondition] = parse_logic_structure(valueLogicStructure);
 
 			}while (current_rule->logicStructureB[cptCondition] == -1);
 
 			if (current_rule->logicStructureB[cptCondition] != OPERATOR_NONE ){
 				printf("\t\t[-] Valeur souhaité : ");
-				scanf(" %d", &current_rule->numberC[cptCondition]);
-			} 
+				while ((current_rule->numberC[cptCondition] = scanfInt()) < 1) {
+					if (current_rule->numberC[cptCondition] == -1) {
+						printf("Ceci n'est pas un nombre, veuillez réessayer : ");
+					} else {
+						printf("Le nombre minimal est 1, veuillez réessayer : ");
+					}
+				}
+			}
 
 			printf("\t\t[-] Caractère environnant : ");
-			scanf(" %c", &current_rule->charD[cptCondition]);
-			
+			current_rule->charD[cptCondition] = scanfChar();
+
 			printf("\t\t[-] Nombre de cases à distance : ");
-			scanf(" %d", &current_rule->numberE[cptCondition]);
+			while ((current_rule->numberE[cptCondition] = scanfInt()) < 1) {
+				if (current_rule->numberE[cptCondition] == -1) {
+					printf("Ceci n'est pas un nombre, veuillez réessayer : ");
+				} else {
+					printf("Le nombre minimal est 1, veuillez réessayer : ");
+				}
+			}
 
 			if (cptCondition < 1){
 				do{
@@ -80,7 +90,7 @@ void ask_rules(){
 					printf("\t\t\t[-] 2 - \"et\"\n");
 					printf("\t\t\t[-] 3 - \"aucun\"\n");
 					printf("\t\t[-] Valeur choisie : ");
-					scanf(" %d", &valueLogicOperator);
+					valueLogicOperator = scanfInt();
 					current_rule->logicOperatorF = parse_logic_operator(valueLogicOperator);
 
 				}while (current_rule->logicOperatorF == -1);
@@ -91,14 +101,13 @@ void ask_rules(){
 			
 		}while(logicOperatorUse && (cptCondition < 2));
 		
-		
 		printf("\t\t[-] Nouveau caractère souhaité : ");
-		scanf(" %c", &current_rule->charG);
+		current_rule->charG = scanfChar();
 
 		set_rule(current_rule, listRules, cptRules);
 
 		printf("[/!\\] Souhaitez-vous ajouter une nouvelle règle (oui/non) ? ");
-		scanf(" %s", strNewRules);
+		strNewRules = scanfLineWithMax(3);
 		if(!check_new_rules(strNewRules)) enterRules = FALSE;
 		cptRules++;
 	}
