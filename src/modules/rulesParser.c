@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <string.h>
 #include <ctype.h>
 #include "../globals.h"
@@ -9,6 +10,7 @@
 #define STR(s) #s
 #define XSTR(s) STR(s)
 
+
 void ask_rules(){
 	// intean to enter multiple rules
 	int enterRules = TRUE;
@@ -17,6 +19,7 @@ void ask_rules(){
 	const int sizeNewRules = 4;
 	// variable for user input 
 	char* strNewRules = malloc(sizeof(char)*sizeNewRules);
+
 	int valueLogicStructure;
 	int valueLogicOperator;
 	// list of rules 
@@ -49,19 +52,23 @@ void ask_rules(){
 		do{
 			do{
 				logicOperatorUse = FALSE;
+
 				printf("\t\t[-] Structure logique : \n");
 				printf("\t\t\t[-] 1 - \"au moins\"\n");
 				printf("\t\t\t[-] 2 - \"au plus\"\n");
 				printf("\t\t\t[-] 3 - \"exactement\"\n");
 				printf("\t\t\t[-] 4 - \"aucun\"\n");
 				printf("\t\t[-] Valeur choisie : ");
+
 				valueLogicStructure = scanfInt();
+
 				current_rule->logicStructureB[cptCondition] = parse_logic_structure(valueLogicStructure);
 
 			}while (current_rule->logicStructureB[cptCondition] == -1);
 
 			if (current_rule->logicStructureB[cptCondition] != OPERATOR_NONE ){
 				printf("\t\t[-] Valeur souhaité : ");
+        
 				while ((current_rule->numberC[cptCondition] = scanfInt()) < 1) {
 					if (current_rule->numberC[cptCondition] == -1) {
 						printf("Ceci n'est pas un nombre, veuillez réessayer : ");
@@ -100,15 +107,17 @@ void ask_rules(){
 			cptCondition++;
 			
 		}while(logicOperatorUse && (cptCondition < 2));
-		
+
 		printf("\t\t[-] Nouveau caractère souhaité : ");
 		current_rule->charG = scanfChar();
 
 		set_rule(current_rule, listRules, cptRules);
 
 		printf("[/!\\] Souhaitez-vous ajouter une nouvelle règle (oui/non) ? ");
+
 		strNewRules = scanfLineWithMax(3);
 		if(!check_new_rules(strNewRules)) enterRules = FALSE;
+
 		cptRules++;
 	}
 }
@@ -163,7 +172,6 @@ void set_rule(rule* rule, llist* list, int id){
 	print_list(list);
 	
 }
-
 
 int check_new_rules(char* response ){
 	response = str_strip(response);
@@ -286,7 +294,9 @@ void print_rule_fr(element *element){
 	int cpt = 0;
 	char* logicStructFr = "";
 	char* logicOperatorFr = "";
+
 	int logicOperatorUse = FALSE;
+
 	//TODO : Jean ajouté la couleur
 	
 	if(element != NULL){
@@ -295,12 +305,14 @@ void print_rule_fr(element *element){
 	
 		do{
 			logicOperatorUse = FALSE;
+
 			logicStructFr = translate_logic_struc(element->rule->logicStructureB[cpt]);
 			if(element->rule->logicStructureB[cpt] != OPERATOR_NONE){
 				printf("\t\t[-] \tS'il y a \"%s\" \"%d\" caractère(s) de type \"%c\" à \"%d\" de distance \n", logicStructFr, element->rule->numberC[cpt], element->rule->charD[cpt], element->rule->numberE[cpt]);
 			}else{
 				printf("\t\t[-] \tS'il y a \"%s\" caractère de type \"%c\" à \"%d\" de distance \n", logicStructFr, element->rule->charD[cpt], element->rule->numberE[cpt]);
 			}
+
 			if(element->rule->logicOperatorF != EMPTY && cpt < 1)
 			{
 				logicOperatorFr = translate_logic_operator(element->rule->logicOperatorF);
