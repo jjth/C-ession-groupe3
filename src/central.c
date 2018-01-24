@@ -168,8 +168,19 @@ int main(int argc, char const *argv[])
     // TODO: SCANF: LIGNE PAR LIGNE:
     // 
     int* matrixSize;
-    matrixSize = ask_lines();
-    // OU CHEMIN DU FICHIER A CHARGER
+
+    char useFile = 'v';
+
+    while(useFile != 'o' && useFile != 'O' && useFile != 'n' && useFile != 'N') {
+        printf("Voulez-vous charger un fichier ? (O/N): ");
+        scanf("%c", &useFile);
+    }
+
+    if (useFile == 'n' || useFile == 'N') {
+        matrixSize = ask_lines();
+    } else {
+        // OU CHEMIN DU FICHIER A CHARGER
+    }
 
     printf("Taille de la matrice: [%dx%d]\n", matrixSize[0], matrixSize[1]);
     // TODO:
