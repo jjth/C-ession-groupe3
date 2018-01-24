@@ -5,8 +5,7 @@
 
 #include "client.h"
 
-static void init(void)
-{
+static void init(void){
 #if defined(WIN32) || defined(WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
    WSADATA wsa;
    int err = WSAStartup(MAKEWORD(2, 2), &wsa);
@@ -18,22 +17,17 @@ static void init(void)
 #endif
 }
 
-static void end(void)
-{
+static void end(void){
 #if defined(WIN32) || defined(WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
    WSACleanup();
 #endif
 }
 
-static void app(const char *address, const char *name)
-{
+static void app(const char *address){
    SOCKET sock = init_connection(address);
    char buffer[BUF_SIZE];
 
    fd_set rdfs;
-
-   /* send our name */
-   write_server(sock, name);
 
    while(1)
    {
@@ -83,24 +77,21 @@ static void app(const char *address, const char *name)
       }
    }
 
-   end_connection(sock);
+   closesocket(sock);
 }
 
-static int init_connection(const char *address)
-{
+static int init_connection(const char *address){
    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
    SOCKADDR_IN sin = { 0 };
    struct hostent *hostinfo;
 
-   if(sock == INVALID_SOCKET)
-   {
+   if(sock == INVALID_SOCKET){
       perror("socket()");
       exit(errno);
    }
 
    hostinfo = gethostbyname(address);
-   if (hostinfo == NULL)
-   {
+   if (hostinfo == NULL){
       fprintf (stderr, "Unknown host %s.\n", address);
       exit(EXIT_FAILURE);
    }
@@ -109,8 +100,7 @@ static int init_connection(const char *address)
    sin.sin_port = htons(PORT);
    sin.sin_family = AF_INET;
 
-   if(connect(sock,(SOCKADDR *) &sin, sizeof(SOCKADDR)) == SOCKET_ERROR)
-   {
+   if(connect(sock,(SOCKADDR *) &sin, sizeof(SOCKADDR)) == SOCKET_ERROR){
       perror("connect()");
       exit(errno);
    }
@@ -118,48 +108,37 @@ static int init_connection(const char *address)
    return sock;
 }
 
-static void end_connection(int sock)
-{
-   closesocket(sock);
-}
-
-static int read_server(SOCKET sock, char *buffer)
-{
+static int read_server(SOCKET sock, char *buffer){
    int n = 0;
 
-   if((n = recv(sock, buffer, BUF_SIZE - 1, 0)) < 0)
-   {
-      perror("recv()");
-      exit(errno);
-   }
-
+    if((n = recv(sock, buffer, BUF_SIZE - 1, 0)) < 0){
+        perror("recv()");
+        exit(errno);
+    }
    buffer[n] = 0;
 
    return n;
 }
 
-static void write_server(SOCKET sock, const char *buffer)
-{
-   if(send(sock, buffer, strlen(buffer), 0) < 0)
-   {
-      perror("send()");
-      exit(errno);
-   }
+static void write_server(SOCKET sock, const char *buffer){
+    if(send(sock, buffer, strlen(buffer), 0) < 0){
+        perror("send()");
+        exit(errno);
+    }
 }
 
-int main(int argc, char **argv)
-{
-   if(argc < 2)
-   {
-      printf("Usage : %s [address] [pseudo]\n", argv[0]);
-      return EXIT_FAILURE;
-   }
+int main(int argc, char **argv){
 
-   init();
+    if(argc < 2){
+        printf("Usage : %s [address] \n", argv[0]);
+        return EXIT_FAILURE;
+    }
 
-   app(argv[1], argv[2]);
+    init();
 
-   end();
+    app(argv[1]);
 
-   return EXIT_SUCCESS;
+    end();
+
+    return EXIT_SUCCESS;
 }
