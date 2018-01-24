@@ -7,7 +7,7 @@
 
 static void init(void)
 {
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
    WSADATA wsa;
    int err = WSAStartup(MAKEWORD(2, 2), &wsa);
    if(err < 0)
@@ -20,7 +20,7 @@ static void init(void)
 
 static void end(void)
 {
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
    WSACleanup();
 #endif
 }

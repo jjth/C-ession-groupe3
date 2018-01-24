@@ -1,9 +1,9 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#ifdef WIN32
-
-#include <winsock2.h>
+#if defined(WIN32) || defined(WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
+#define WIN32 0
+#include <windows.h>
 
 #else
 
@@ -28,17 +28,12 @@ typedef struct in_addr IN_ADDR;
 
 #define BUF_SIZE	1024
 
-typedef struct
-{
-   SOCKET sock;
-   char name[BUF_SIZE];
-}Client;
 
 static void init(void);
 static void end(void);
 static void app(void);
 static int init_connection(void);
-static int read_client(SOCKET sock, char *buffer);
+static int read_client(SOCKET* sock, char *buffer);
 static void write_client(SOCKET sock, const char *buffer);
 
 #endif /* guard */
