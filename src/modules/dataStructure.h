@@ -1,6 +1,6 @@
 
 #define RESET 0
-
+#define SIZE_STACK 1000
 
 typedef struct Line Line;
 struct Line {
@@ -27,8 +27,15 @@ struct ListingTi {
     Ti *first;
 };
 
-ListingLine *initialisationLine(int size,int id, char c0, char c1, char c2, char c3);
-void addALine(ListingLine *listingLine, int size, int id, char c0, char c1, char c2, char c3);
+typedef struct stack stack;
+struct stack{
+	int top;
+	int size;
+	char* array;
+};
+
+ListingLine *initialisationLine();
+void addALine(ListingLine *listingLine, int size, int id, char *str);
 int deleteALine(ListingLine *listingLine, int id);
 void displayListingValue(ListingLine *listingLine, int size);
 void displayListingColor(ListingLine *listingLine, int size);
@@ -37,3 +44,9 @@ void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c);
 void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c);
 int getCharacterColor(ListingLine *listingLine, int idLine,int idColor);
 int getNeighbors(ListingLine *myListing,int nbLine,int nbColunm,int x,int y,int d,char t);
+
+struct stack* create_stack(int size);
+int isFull(struct stack* st);
+int isEmpty(struct stack* st);
+void push(struct stack* st, char element);
+char pop(struct stack* st);
