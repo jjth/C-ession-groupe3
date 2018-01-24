@@ -2,24 +2,23 @@
     #define WIN32 0
     #include <winsock2.h>
     typedef int socklen_t;
-// #elif defined (linux)
-//     #include <sys/types.h>
-//     #include <sys/socket.h>
-//     #include <netinet/in.h>
-//     #include <arpa/inet.h>
-//     #include <unistd.h>
-//     #define INVALID_SOCKET -1
-//     #define SOCKET_ERROR -1
-//     #define closesocket(s) close(s)
-//     typedef int SOCKET;
-//     typedef struct sockaddr_in SOCKADDR_IN;
-//     typedef struct sockaddr SOCKADDR;
+#elif defined (linux)
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+    #define INVALID_SOCKET -1
+    #define SOCKET_ERROR -1
+    #define closesocket(s) close(s)
+    typedef int SOCKET;
+    typedef struct sockaddr_in SOCKADDR_IN;
+    typedef struct sockaddr SOCKADDR;
 #endif
  
 #include <stdio.h>
 #include <stdlib.h>
 #define PORT 766
- 
  
  
 int main(void)
@@ -28,6 +27,7 @@ int main(void)
         WSADATA WSAData;
         int erreur = WSAStartup(MAKEWORD(2,2), &WSAData);
     #else
+    
         int erreur = 0;
     #endif
  
@@ -47,13 +47,15 @@ int main(void)
         sin.sin_port = htons(PORT);
  
         /* Si l'on a réussi à se connecter */
+        
         if(connect(sock, (SOCKADDR*)&sin, sizeof(sin)) != SOCKET_ERROR)
         {
             printf("Connection à %s sur le port %d\n", inet_ntoa(sin.sin_addr), htons(sin.sin_port));
             
             /* Si l'on reçoit des informations : on les affiche à l'écran */
-            if(recv(sock, buffer, 32, 0) != SOCKET_ERROR)
+            while((recv(sock, buffer, 32, 0) != SOCKET_ERROR) && (buffer != "stop\n")){
                 printf("Recu : %s\n", buffer);
+            }
         }
         /* sinon, on affiche "Impossible de se connecter" */
         else
