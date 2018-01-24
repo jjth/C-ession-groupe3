@@ -6,6 +6,12 @@
 #include "client.h"
 #include "../globals.h"
 
+typedef struct {
+    int connected;
+    error err;
+    SOCKET socket;
+} NetworkClientConnection;
+
 error init_client(void) {
     error err = {
         ERROR_NONE,
@@ -35,7 +41,7 @@ NetworkClientConnection connect_client(const char* ip, int port) {
         0
     };
 
-    error* perr = &err;
+    error* perr = err;
     NetworkClientConnection* pconn = &conn;
 
     SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -67,7 +73,7 @@ NetworkClientConnection connect_client(const char* ip, int port) {
     pconn->socket = sock;
     pconn->err = *perr;
 
-    return *pconn;
+    return *conn;
 }
 
 void deinit_client() {
@@ -93,14 +99,14 @@ static void end(void){
    WSACleanup();
 #endif
 }
-
+*/
 static void app(const char *address1, const char *address2){
     SOCKET sockPair = init_connection(address2, 767);
     SOCKET sockImpair = init_connection(address1, 766);
     char buffer[BUF_SIZE];
     char buffer2[BUF_SIZE];
     while(1){
-      /* something from standard input : i.e keyboard *
+      /* something from standard input : i.e keyboard */
         fgets(buffer, BUF_SIZE - 1, stdin);
         {
             char *p = NULL;
@@ -108,7 +114,7 @@ static void app(const char *address1, const char *address2){
             if(p != NULL){
                 *p = 0;
             }else{
-                /* fclean *
+                /* fclean */
                 buffer[BUF_SIZE - 1] = 0;
             }
          }
@@ -118,7 +124,7 @@ static void app(const char *address1, const char *address2){
         int n = read_server(&sockPair, buffer);
         int n1 = read_server(&sockImpair, buffer2);        
 
-        /* server down *
+        /* server down */
         if(n == 0){
             printf("Server disconnected !\n");
             break;
@@ -163,7 +169,7 @@ static int init_connection(const char *address, int port){
 
    return sock;
 }
-*
+*/
 static int read_server(SOCKET* sock, char *buffer){
    int n = 0;
     printf("recv\n");
@@ -182,4 +188,19 @@ static void write_server(SOCKET sock, const char *buffer){
         exit(errno);
     }
 }
-*/
+
+int main(int argc, char **argv){
+
+    char* adr1;
+    char* adr2;
+    adr1 = "127.0.0.1";
+    adr2 = "127.0.0.1";
+
+    init();
+
+    app(adr1, adr2);
+
+    end();
+
+    return EXIT_SUCCESS;
+}

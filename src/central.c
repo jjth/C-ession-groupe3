@@ -9,6 +9,7 @@
 #include "modules/rulesParser.h"
 #include "modules/readFile.h"
 #include "modules/scanf.h"
+#include "modules/client.h"
 
 #define LINE_SIZE 5
 #define NB_LINE 5
@@ -21,28 +22,6 @@
 #define Sleep(x) usleep((x)*1000)
 #endif
 
-typedef int SOCKET;
-
-typedef struct {
-    int connected;
-    error err;
-    SOCKET socket;
-} NetworkClientConnection;
-
-NetworkClientConnection connect_client(const char* ip, int port) {
-    error err = {
-        ERROR_NONE,
-        ""
-    };
-
-    NetworkClientConnection conn = {
-        TRUE,
-        err,
-        0
-    };
-
-    return conn;
-}
 /**
  * Output an error to the user.
  */

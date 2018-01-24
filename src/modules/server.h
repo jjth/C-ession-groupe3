@@ -24,15 +24,14 @@ typedef struct in_addr IN_ADDR;
 #endif
 
 #define CRLF		"\r\n"
-#define PORT	 	766
 
 #define BUF_SIZE	1024
 
 
 static void init(void);
 static void end(void);
-static void app(void);
-static int init_connection(void);
+static void app(int port);
+static int init_connection(int port);
 static int read_client(SOCKET* sock, char *buffer);
 static void write_client(SOCKET sock, const char *buffer);
 
