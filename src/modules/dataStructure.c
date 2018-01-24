@@ -3,50 +3,36 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-ListingLine *initialisationLine(int size,int id, char c0, char c1, char c2, char c3) {
+ListingLine *initialisationLine() {
     ListingLine *listingLine = malloc(sizeof(*listingLine));
-    Line *line = malloc(sizeof(*line));
-
-    if (listingLine == NULL || line == NULL)
-    {
-        exit(EXIT_FAILURE);
-    }else{
-    	line->id = id;
-    	line->colors = malloc(sizeof(int)*size);
-    	line->colors[0] = RESET;
-    	line->colors[1] = RESET;
-    	line->colors[2] = RESET;
-    	line->colors[3] = RESET;
-    	line->line = malloc(sizeof(char)*size);
-    	line->line[0] = c0;
-    	line->line[1] = c1;
-    	line->line[2] = c2;
-    	line->line[3] = c3;
-    	line->next = NULL;
-    	listingLine->first = line;
-    	return listingLine;
-    }
+    return listingLine;
 }
 
-void addALine(ListingLine *listingLine, int size, int id, char c0, char c1, char c2, char c3){
+void addALine(ListingLine *listingLine, int size, int id, char *str){
+    int cnt;
     Line *new = malloc(sizeof(*new));
     if (listingLine == NULL || new == NULL)
     {
         exit(EXIT_FAILURE);
     }else {
+        if(id == 1){
+            new->next = NULL;
+        }else{
+            new->next = listingLine->first;
+        }
 	    new->id = id;
 	    new->colors = malloc(sizeof(int)*size);
-	    new->colors[0] = RESET;
-    	new->colors[1] = RESET;
-    	new->colors[2] = RESET;
-    	new->colors[3] = RESET;
+        for (cnt = 0; cnt < size; cnt++){
+            new->colors[cnt]= RESET;
+        }
     	new->line = malloc(sizeof(char)*size);
-	    new->line[0] = c0;
-    	new->line[1] = c1;
-    	new->line[2] = c2;
-    	new->line[3] = c3;
-	    new->next = listingLine->first;
+        for (cnt = 0; cnt < size; cnt++){
+	       new->line[cnt] = str[cnt];
+        }
 	    listingLine->first = new;    	
+    }
+    if(listingLine->first == NULL){
+        new->next = NULL;
     }
 }
 
@@ -84,32 +70,51 @@ int deleteALine(ListingLine *listingLine, int id){
 
 void displayListingValue(ListingLine *listingLine, int size){
 	int compteur = 0;
+    int compteurLine = 0;
+    int compteurColor = 0;
+    int i = 0;
+    char **tabLine = malloc(sizeof(*tabLine)*SIZE_STACK);
     if (listingLine == NULL){
         exit(EXIT_FAILURE);
     }
     Line *current = listingLine->first;
     while (current != NULL){
-        printf("%d-> ", current->id);
-        //printf("%s\n", current->line);
-        for (compteur = 0;compteur<size;compteur++){
-        	printf("%d[%c], ",compteur, current->line[compteur]);
+        //printf("%d-> ", current->id);
+        tabLine[compteurLine]=current->line;
+        // printf("%s\n", current->line);
+        /*for (compteur = 0;compteur<size;compteur++){
+            push(st,current->line[compteur]);
+        	printf("[%c]",current->line[compteur]);
+        }
+        printf("\n");*/
+        current = current->next;
+        compteurLine += 1;
+    }
+    
+    for(compteur =  compteurLine-1; compteur >= 0 ; compteur--){
+        for (i = 0 ; i <size ; i++){
+            printf("[%c]",tabLine[compteur][i] );
         }
         printf("\n");
-        current = current->next;
     }
 }
 void displayListingColor(ListingLine *listingLine, int size){
     int compteur = 0;
+    int compteurLine = 0;
+    int i = 0;
+    int **tabLine = malloc(sizeof(*tabLine)*SIZE_STACK);
     if (listingLine == NULL){
         exit(EXIT_FAILURE);
     }
     Line *current = listingLine->first;
     while (current != NULL){
-        for (compteur = 0;compteur<size;compteur++){
+        tabLine[compteurLine]=current->colors;
+        /*for (compteur = 0;compteur<size;compteur++){
             printf("%d, ",current->colors[compteur]);
         }
-        printf("\n");
+        printf("\n");*/
         current = current->next;
+        compteurLine += 1;
     }
 }
 
@@ -229,4 +234,34 @@ int getNeighbors(ListingLine *mylist,int nbLine,int nbColunmTotal,int yValue,int
     }
     //printf("debug2 -> %d distance: %d \n",cptT, distance );
     return cptT;
+}
+struct stack* create_stack(int size){
+    struct stack* st = (struct stack*) malloc(sizeof(struct stack));
+    st->size = size;
+    st->top = -1;
+    st->array = (char*)malloc(st->size * sizeof(char));
+    return st;
+}
+
+int isFull(struct stack* st){
+    return st->top == st->size -1;
+}
+
+int isEmpty(struct stack* st){
+    return st->top == -1;
+}
+
+void push(struct stack* st, char element){
+    if(isFull(st)){
+        return;
+    }
+    st->array[++st->top] = element;
+    //printf("%d pushed !\n", element);
+}
+
+char pop(struct stack* st){
+    if (isEmpty(st)){
+        return -1;
+    }
+    return st->array[st->top--];
 }
