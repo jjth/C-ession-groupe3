@@ -4,8 +4,9 @@
 #include "../globals.h"
 #include "readLines.h"
 #include "scanf.h"
+#include "client.h"
 
-int* ask_lines(){
+int* ask_lines(NetworkClientConnection conn_pair, NetworkClientConnection conn_impair){
 	int run = TRUE;
 	int cpt = 1;
 	int nbColumn = -1;
@@ -23,14 +24,25 @@ int* ask_lines(){
 	printf("\t[-] Saisissez les lignes de l'échéquier : \n");
 	
 	char* line = malloc(sizeof(char)*nbColumn);
-
+    NetworkClientConnection conn_temp;
     while(run) {
         printf("\t\t[-] Ligne n°%d (ligne vide pour arrêter) : ", cpt);
 
         line = scanfLineWithMax(nbColumn);
 
         if (strlen(line) == nbColumn) {
-            send_to_network(line, cpt);
+            if ((cpt%2) == 0) {
+                conn_temp = conn_pair;
+            } else {
+                conn_temp = conn_impair;
+            }
+
+            error err = send_to_network(conn_temp, line);
+
+            while (err.id != ERROR_NONE) {
+                printf("Impossible d'envoyer cette ligne: %s\n", err.message);
+                err = send_to_network(conn_temp, line);
+            }
             cpt += 1;
         } else if (strlen(line) == 0) {
             run = FALSE;
@@ -43,15 +55,4 @@ int* ask_lines(){
     matrixSize[1] = nbColumn;
 
     return matrixSize;
-}
-
-void send_to_network(char* line, int id){
-	// TODO : VINCENT SEND DATA TO CLIENT 
-	if((id%2)==0){
-		//send to pair 
-		printf("Send line to pair client\n");
-	}else{
-		//send to impair 
-		printf("Send line to impair client\n");
-	}
 }
