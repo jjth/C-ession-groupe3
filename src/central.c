@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "modules/configparser.h"
 #include "modules/colors.h"
+#include "modules/client.h"
 #include "modules/readLines.h"
 #include "modules/rulesParser.h"
 #include "modules/readFile.h"
@@ -21,28 +22,6 @@
 #define Sleep(x) usleep((x)*1000)
 #endif
 
-typedef int SOCKET;
-
-typedef struct {
-    int connected;
-    error err;
-    SOCKET socket;
-} NetworkClientConnection;
-
-NetworkClientConnection connect_client(const char* ip, int port) {
-    error err = {
-        ERROR_NONE,
-        ""
-    };
-
-    NetworkClientConnection conn = {
-        TRUE,
-        err,
-        0
-    };
-
-    return conn;
-}
 /**
  * Output an error to the user.
  */
@@ -56,18 +35,7 @@ void print_error(const char* format, ...) {
 
     va_end(args);
 }
-/*
-void send_to_network(char* line, int id){
-	// TODO : VINCENT SEND DATA TO CLIENT 
-	if((id%2)==0){
-		//send to pair 
-		printf("Send line to pair client\n");
-	}else{
-		//send to impair 
-		printf("Send line to impair client\n");
-	}
-}
-*/
+
 int main(int argc, char const *argv[])
 {
     //////////////////////////
@@ -189,7 +157,7 @@ int main(int argc, char const *argv[])
     }
 
     if (useFile == 'n' || useFile == 'N') {
-        matrixSize = ask_lines();
+        matrixSize = ask_lines(&conn_pair, &conn_impair);
     } else {
         matrixSize = malloc(sizeof(int)*2);
         int file_read_ok = FALSE;
@@ -207,10 +175,31 @@ int main(int argc, char const *argv[])
 
                 int i = 1;
                 char* line;
+                NetworkClientConnection conn_temp;
+                error err;
                 do {
                     line = readLine(fileRead);
                     if (line != NULL && strcmp(line, "") != 0) {
-                        send_to_network(line, i);
+                        if (i%2 == 0) {
+                            conn_temp = conn_pair;
+                        } else {
+                            conn_temp = conn_impair;
+                        }
+
+                        err = send_to_network(conn_temp, line);
+
+                        if (err.id != ERROR_NONE) {
+                            printf("Impossible d'envoyer la ligne %d : %s\n", i, err.message);
+                            // Failed ? Try again one more time.
+                            err = send_to_network(conn_temp, line);
+
+                            if (err.id != ERROR_NONE) {
+                                // Failed again, we gotta crash now
+                                printf("Impossible d'envoyer la ligne %d : %s\n", i, err.message);
+                                exit(1);
+                            }
+                        }
+
                         i++;
                     }
 

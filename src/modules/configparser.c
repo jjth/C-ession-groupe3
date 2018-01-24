@@ -94,7 +94,7 @@ configuration load_config(ModuleType type) {
 
 char* default_config_string(ModuleType type) {
     if (type == MODULE_CENTRAL) {
-        return "[Pair]\nip=127.0.0.1\nport=766\n[Impair]\nip=127.0.0.1\nport=766\n";
+        return "[Pair]\nip=127.0.0.1\nport=766\n[Impair]\nip=127.0.0.1\nport=767\n";
     } else {
         return "[Client]\nport=766\n";
     }
