@@ -27,10 +27,14 @@ typedef struct in_addr IN_ADDR;
 #define PORT	 766
 #define BUF_SIZE 1024
 
-static void init(void);
+
+error init_client(void);
+NetworkClientConnection connect_client(const char* ip, int port);
+void deinit_client();
+// static void init(void);
 static void end(void);
 static void app(const char *address1,const char *address2);
-static int init_connection(const char *address1,int port);
+//static int init_connection(const char *address1,int port);
 static int read_server(SOCKET* sock, char *buffer);
 static void write_server(SOCKET sock, const char *buffer);
 
