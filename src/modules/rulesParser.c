@@ -6,6 +6,7 @@
 #include "../globals.h"
 #include "rulesParser.h"
 #include "scanf.h"
+#include "colors.h"
 
 #define STR(s) #s
 #define XSTR(s) STR(s)
@@ -28,6 +29,7 @@ void ask_rules(){
 
 	int cptRules = 0;
 
+	initColors();
 	printf("[-] Saisie des règles : \n");
 
 	while(enterRules){
@@ -111,7 +113,8 @@ void ask_rules(){
 		printf("\t\t[-] Nouveau caractère souhaité : ");
 		current_rule->charG = scanfChar();
 
-		set_rule(current_rule, listRules, cptRules);
+		int ruleColor = getRandomColor();
+		set_rule(current_rule, listRules, cptRules, ruleColor);
 
 		printf("[/!\\] Souhaitez-vous ajouter une nouvelle règle (oui/non) ? ");
 
@@ -165,9 +168,8 @@ LogicOperator parse_logic_operator(int response){
 	}
 }
 
-void set_rule(rule* rule, llist* list, int id){
-	// TODO : Jean set color here 
-	add_at_the_end(list, id, rule, "blue");
+void set_rule(rule* rule, llist* list, int id, int color){
+	add_at_the_end(list, id, rule, color);
 	printf("[-] Affichage des règles enregistrées : \n");
 	print_list(list);
 	
@@ -256,7 +258,7 @@ llist* erase_list(llist* list){
     }
 }
 
-void add_at_the_end(llist* list, int id, rule* rule, char* color){
+void add_at_the_end(llist* list, int id, rule* rule, int color){
     // Create new element
     element* newElement = malloc(sizeof(element));
     // add values to the new element 
@@ -282,7 +284,6 @@ void print_list(llist* list){
     element *tmp = list->first;
     /* while not end of the list */
     while(tmp != NULL){
-    	printf("test--->\n");
         /* print element  */
 		print_rule_fr(tmp);
         /* switch to next element  */
@@ -297,9 +298,8 @@ void print_rule_fr(element *element){
 
 	int logicOperatorUse = FALSE;
 
-	//TODO : Jean ajouté la couleur
-	
 	if(element != NULL){
+		setColor(element->color);
 		printf("\t[-] Règles n°%d \n", element->id);
 		printf("\t\t[-] Pour chaque case de type \"%c\" \n", element->rule->charA);
 	
@@ -323,6 +323,7 @@ void print_rule_fr(element *element){
 		}while(logicOperatorUse && (cpt < 2));
 
 		printf("\t[-] alors la case devient de type \"%c\" \n", element->rule->charG);
+		resetColor();
 	}
 }
 
