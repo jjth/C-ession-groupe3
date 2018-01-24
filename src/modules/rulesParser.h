@@ -30,7 +30,7 @@ struct rule{
 	int* numberC;
 	char* charD;
 	int* numberE;
-	LogicOperator logicOperatorF;
+	LogicOperator* logicOperatorF;
 	char charG;
 }; 
 
