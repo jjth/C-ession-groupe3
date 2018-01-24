@@ -33,7 +33,6 @@ typedef struct in_addr IN_ADDR;
 
 #define BUF_SIZE	1024
 
-#include "client.h"
 
 static void init(void);
 static void end(void);
@@ -46,10 +45,5 @@ static void send_message_to_all_clients(Client *clients, Client client, int actu
 static void remove_client(Client *clients, int to_remove, int *actual);
 static void clear_clients(Client *clients, int actual);
 
-typedef struct
-{
-   SOCKET sock;
-   char name[BUF_SIZE];
-}Client;
 
 #endif /* guard */
