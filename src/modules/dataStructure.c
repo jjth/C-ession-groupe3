@@ -82,20 +82,31 @@ int deleteALine(ListingLine *listingLine, int id){
     return -1;
 }
 
-void displayListing(ListingLine *listingLine, int size){
+void displayListingValue(ListingLine *listingLine, int size){
 	int compteur = 0;
     if (listingLine == NULL){
         exit(EXIT_FAILURE);
     }
     Line *current = listingLine->first;
     while (current != NULL){
-        printf("%d\n",current->id);
+        printf("%d-> ", current->id);
+        //printf("%s\n", current->line);
         for (compteur = 0;compteur<size;compteur++){
-        	printf("%d, ",current->colors[compteur]);
+        	printf("%d[%c], ",compteur, current->line[compteur]);
         }
         printf("\n");
+        current = current->next;
+    }
+}
+void displayListingColor(ListingLine *listingLine, int size){
+    int compteur = 0;
+    if (listingLine == NULL){
+        exit(EXIT_FAILURE);
+    }
+    Line *current = listingLine->first;
+    while (current != NULL){
         for (compteur = 0;compteur<size;compteur++){
-        	printf("%c, ",current->line[compteur]);
+            printf("%d, ",current->colors[compteur]);
         }
         printf("\n");
         current = current->next;
@@ -153,4 +164,69 @@ void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c){
         }
         current = current->next;
     }
+}
+int getNeighbors(ListingLine *mylist,int nbLine,int nbColunmTotal,int yValue,int xValue,int distance,char target){
+    int x = 0;
+    int y = 0;
+    int cptT = 0;
+    char tmp = ' ';
+
+    for (y=distance; y > 0 ;y--){ 
+        for (x = distance; x > 0 ; x--){ 
+            //printf("loop %d %d \n",x,y);
+            if((xValue+x < nbColunmTotal) && (yValue+y <= nbLine)){
+                //printf("1-> %d %d %d %d %c\n",x,y,xValue+x, yValue+y,getCharacter(mylist,yValue+y,xValue+x));
+                tmp = getCharacter(mylist,yValue+y,xValue+x);
+                if(tmp == target){ cptT++; }
+            }
+            if((xValue-x >= 0) && (yValue+y <= nbLine)){
+                //printf("2-> %d %d %c\n",xValue-x, yValue+y,getCharacter(mylist,yValue+y,xValue-y));
+                tmp = getCharacter(mylist,yValue+y,xValue-x);
+                if(tmp == target){ cptT++; }
+            }
+            if((xValue+x < nbColunmTotal) && (yValue-y > 0)){
+                //printf("3-> %d %d %c\n",xValue+x, yValue-x,getCharacter(mylist,yValue-y,xValue+x));
+                tmp = getCharacter(mylist,yValue-y,xValue+x);
+                if(tmp == target){ cptT++; }
+            }
+            if((xValue-x >= 0) && (yValue-y > 0)){
+                //printf("4-> %d %d %c\n",xValue-x, yValue-y,getCharacter(mylist,yValue-y,xValue-x));
+                tmp = getCharacter(mylist,yValue-y,xValue-x);
+                if(tmp == target){ cptT++; }
+            }
+        }
+    }
+    //printf("debug -> %d distance: %d \n",cptT, distance );
+    for(x=distance;x > 0;x--){
+        if((xValue+x < nbColunmTotal) && (xValue+x <= xValue+distance)){
+            //printf("55-> %d %d %c\n",xValue+x,yValue,getCharacter(mylist,yValue,xValue+x) );
+            tmp = getCharacter(mylist,yValue,xValue+x);
+            if(tmp == target){ cptT += 1; }
+        }
+        
+        if((xValue-x >= 0) && (xValue-x >= xValue-distance)){
+            //printf("555-> %d %d %c\n",xValue-x,yValue,getCharacter(mylist,yValue,xValue-x) );
+            tmp = getCharacter(mylist,yValue,xValue-x);
+            if(tmp == target){ cptT += 1; }
+        }
+
+    }
+    //printf("debug1 -> %d distance: %d \n",cptT, distance );
+    //printf("test\n");
+    for(y=distance;y> 1;y--){
+        if((yValue-y > 0) && (yValue-y >= yValue-y)){
+            //printf("66-> %d %d %c\n",xValue,yValue-y,getCharacter(mylist,yValue-y,xValue) );
+            tmp = getCharacter(mylist,yValue-y,xValue);
+            if(tmp == target){ cptT += 1; }
+        }
+        
+        if((yValue+y <= nbLine) && (yValue+y <= yValue+y)){
+            //printf("666-> %d %d %c\n",xValue,yValue-y,getCharacter(mylist,yValue-y,xValue) );
+            tmp = getCharacter(mylist,yValue+y,xValue);        
+            if(tmp == target){ cptT += 1; }
+        }
+
+    }
+    //printf("debug2 -> %d distance: %d \n",cptT, distance );
+    return cptT;
 }
