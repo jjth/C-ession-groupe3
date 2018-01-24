@@ -39,12 +39,14 @@ static void app(void){
 	while(1){
 		int i = 0;
 		int c = read_client(&csock, buffer);
-		// write_client(csock, chaine);
 		/* client disconnected */
 		if(c == 0){
 			closesocket(csock);
 			break;
-		}
+		} 
+
+		write_client(csock, "Ok serv 1");
+
 	}
 
 }

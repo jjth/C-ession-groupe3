@@ -29,9 +29,9 @@ typedef struct in_addr IN_ADDR;
 
 static void init(void);
 static void end(void);
-static void app(const char *address);
-static int init_connection(const char *address);
-static int read_server(SOCKET sock, char *buffer);
+static void app(const char *address1,const char *address2);
+static int init_connection(const char *address1,int port);
+static int read_server(SOCKET* sock, char *buffer);
 static void write_server(SOCKET sock, const char *buffer);
 
 #endif /* guard */

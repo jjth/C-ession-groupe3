@@ -23,64 +23,49 @@ static void end(void){
 #endif
 }
 
-static void app(const char *address){
-   SOCKET sock = init_connection(address);
-   char buffer[BUF_SIZE];
-
-   fd_set rdfs;
-
-   while(1)
-   {
-      FD_ZERO(&rdfs);
-
-      /* add STDIN_FILENO */
-      FD_SET(STDIN_FILENO, &rdfs);
-
-      /* add the socket */
-      FD_SET(sock, &rdfs);
-
-      if(select(sock + 1, &rdfs, NULL, NULL, NULL) == -1)
-      {
-         perror("select()");
-         exit(errno);
-      }
-
+static void app(const char *address1, const char *address2){
+    SOCKET sockPair = init_connection(address2, 767);
+    SOCKET sockImpair = init_connection(address1, 766);
+    char buffer[BUF_SIZE];
+    char buffer2[BUF_SIZE];
+    while(1){
       /* something from standard input : i.e keyboard */
-      if(FD_ISSET(STDIN_FILENO, &rdfs))
-      {
-         fgets(buffer, BUF_SIZE - 1, stdin);
-         {
+        fgets(buffer, BUF_SIZE - 1, stdin);
+        {
             char *p = NULL;
             p = strstr(buffer, "\n");
-            if(p != NULL)
-            {
-               *p = 0;
-            }
-            else
-            {
-               /* fclean */
-               buffer[BUF_SIZE - 1] = 0;
+            if(p != NULL){
+                *p = 0;
+            }else{
+                /* fclean */
+                buffer[BUF_SIZE - 1] = 0;
             }
          }
-         write_server(sock, buffer);
-      }
-      else if(FD_ISSET(sock, &rdfs))
-      {
-         int n = read_server(sock, buffer);
-         /* server down */
-         if(n == 0)
-         {
+        write_server(sockPair, buffer);
+        write_server(sockImpair, buffer);        
+
+        int n = read_server(&sockPair, buffer);
+        int n1 = read_server(&sockImpair, buffer2);        
+
+        /* server down */
+        if(n == 0){
             printf("Server disconnected !\n");
             break;
-         }
-         puts(buffer);
-      }
+        }
+        if(n1 == 0){
+            printf("Server disconnected !\n");
+            break;
+        }
+        puts(buffer);
+        puts(buffer2);
    }
 
-   closesocket(sock);
+   closesocket(sockImpair);
+   closesocket(sockPair);
+   
 }
 
-static int init_connection(const char *address){
+static int init_connection(const char *address, int port){
    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
    SOCKADDR_IN sin = { 0 };
    struct hostent *hostinfo;
@@ -97,7 +82,7 @@ static int init_connection(const char *address){
    }
 
    sin.sin_addr = *(IN_ADDR *) hostinfo->h_addr;
-   sin.sin_port = htons(PORT);
+   sin.sin_port = htons(port);
    sin.sin_family = AF_INET;
 
    if(connect(sock,(SOCKADDR *) &sin, sizeof(SOCKADDR)) == SOCKET_ERROR){
@@ -108,10 +93,10 @@ static int init_connection(const char *address){
    return sock;
 }
 
-static int read_server(SOCKET sock, char *buffer){
+static int read_server(SOCKET* sock, char *buffer){
    int n = 0;
-
-    if((n = recv(sock, buffer, BUF_SIZE - 1, 0)) < 0){
+    printf("recv\n");
+    if((n = recv(*sock, buffer, BUF_SIZE - 1, 0)) < 0){
         perror("recv()");
         exit(errno);
     }
@@ -129,14 +114,14 @@ static void write_server(SOCKET sock, const char *buffer){
 
 int main(int argc, char **argv){
 
-    if(argc < 2){
-        printf("Usage : %s [address] \n", argv[0]);
-        return EXIT_FAILURE;
-    }
+    char* adr1;
+    char* adr2;
+    adr1 = "127.0.0.1";
+    adr2 = "127.0.0.1";
 
     init();
 
-    app(argv[1]);
+    app(adr1, adr2);
 
     end();
 
