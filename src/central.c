@@ -186,12 +186,12 @@ int main(int argc, char const *argv[])
                             conn_temp = conn_impair;
                         }
 
-                        err = send_to_network(conn_temp, line);
+                        err = send_line_to_network(conn_temp, line);
 
                         if (err.id != ERROR_NONE) {
                             printf("Impossible d'envoyer la ligne %d : %s\n", i, err.message);
                             // Failed ? Try again one more time.
-                            err = send_to_network(conn_temp, line);
+                            err = send_line_to_network(conn_temp, line);
 
                             if (err.id != ERROR_NONE) {
                                 // Failed again, we gotta crash now

@@ -51,4 +51,13 @@ typedef struct {
     ErrorType id;
     char* message;
 } error;
+
+#if defined(WIN32) || defined(_WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
+char *strsep(char **stringp, const char *delim);
+#endif
+
+char* prepare_for_send(CommandType type, char* data);
+CommandType get_command(char* string);
+char* get_recv_data(char* string);
+char** str_split(char* string);
 #endif

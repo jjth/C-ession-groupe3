@@ -35,5 +35,6 @@ typedef struct {
 error init_client(void);
 NetworkClientConnection connect_client(const char* ip, int port);
 void deinit_client();
-error send_to_network(NetworkClientConnection conn, const char* line);
+error send_to_network(NetworkClientConnection conn, char* line);
+error send_line_to_network(NetworkClientConnection conn, char* line);
 #endif /* guard */
