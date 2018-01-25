@@ -38,25 +38,11 @@ void end(void){
 void app(int port, ModuleType module){
 	SOCKET sock = init_connection(port);
 	char buffer[BUF_SIZE];
-	int line = 5; 
-    int col = 3;
-    int d = 3;
-    char t = 'X';
-    int nbLine = 5;
-    int nbColunm = 4;
+
 	ListingLine *myListing = initialisationLine();
     if(module == MODULE_PAIR) globalCptLine = 2;
 	else globalCptLine = 1;
     displayListingValue(myListing,4);
-    /*deleteALine(myListing,0);
-    displayListing(myListing,4);
-    setCharacter(myListing, 2,3,'z');
-    displayListing(myListing,4);
-    printf("%c \n",getCharacter(myListing, 2,3));
-    */printf("%d \n",getCharacterColor(myListing, 2,3));
-    /*setCharacterColor(myListing,2,3,2);
-    displayListing(myListing,4);*/
-    printf("x: %d, y: %d [%c], d: %d, t: %c, result:%d \n",col,line,getCharacter(myListing,line,col),d,t,getNeighbors(myListing,nbLine,nbColunm,line,col,d,t));
 
 	/* the index for the array */
 	SOCKADDR_IN csin = { 0 };
@@ -122,6 +108,7 @@ int read_client(SOCKET* sock, char *buffer){
 		n = 0;
 	}
 	buffer[n] = 0;
+	int is;
 	// printf("%s \n", buffer);
 	cmd = get_command(buffer);
 	switch(cmd){
@@ -158,11 +145,15 @@ int read_client(SOCKET* sock, char *buffer){
 			setCharacterColor(current_matrix,atoi(data[0]),atoi(data[1]), atoi(data[2]));
 			break;
 		case CMD_TIME_NEW : 
-			int is = isCycle(myTi, current_matrix);
+			printf("[CLIENT] NEW\n");
+			is = isCycle(myTi, current_matrix);
 			if (is == -1) {
+				printf("[CLIENT] LOLOK\n");
 				write_client(*sock, "OK");
 			} else {
+				printf("[CLIENT] LOLPASOK\n");
 				addTi(myTi, globalCptTime, current_matrix);
+				printf("[CLIENT] NEW2\n");
 				globalCptTime++;
 				sprintf(tmpString, "%d", is);
 				write_client(*sock, tmpString);

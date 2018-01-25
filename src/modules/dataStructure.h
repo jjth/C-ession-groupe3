@@ -40,6 +40,6 @@ char getCharacter(ListingLine *listingLine, int idLine,int idCharacter);
 void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c);
 void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c);
 int getCharacterColor(ListingLine *listingLine, int idLine,int idColor);
-int getNeighbors(ListingLine *myListing,int nbLine,int nbColunm,int x,int y,int d,char t);
+int getNeighbors(int nbLine,int nbColunm,int x,int y,int d,char t);
 ListingLine *createCopy(ListingLine *listingLine, int size);
 int isCycle(ListingTi *myListTi, ListingLine *myListingLine);

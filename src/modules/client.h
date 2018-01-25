@@ -13,24 +13,17 @@
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
 #define closesocket(s) close(s)
-typedef int SOCKET;
+
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 typedef struct in_addr IN_ADDR;
 
 #endif
 
-#include "../globals.h"
-
 #define CRLF	 "\r\n"
 #define PORT	 766
 #define BUF_SIZE 1024
-
-typedef struct {
-    int connected;
-    error err;
-    SOCKET socket;
-} NetworkClientConnection;
+#include "../globals.h"
 
 error init_client(void);
 NetworkClientConnection connect_client(const char* ip, int port);
@@ -38,4 +31,6 @@ void deinit_client();
 error send_to_network(NetworkClientConnection conn, char* line);
 error send_line_to_network(NetworkClientConnection conn, char* line);
 char* set_new_cycle(NetworkClientConnection conn);
+char get_char_from(NetworkClientConnection conn, int x, int y);
+int get_color_from(NetworkClientConnection conn, int x, int y);
 #endif /* guard */

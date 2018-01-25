@@ -3,10 +3,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include "applyRules.h"
+#include "rulesParser.h"
+#include "evaluationRules.h"
 
-
-
-void build_expression(int x, int y, rule* r, Ope* myOpe){
+void build_expression(int x, int y, rule* r, Ope* myOpe, int totalLines, int totalColumns){
     
     
     LogicStructure B;
@@ -23,8 +23,8 @@ void build_expression(int x, int y, rule* r, Ope* myOpe){
     if(B != OPERATOR_NONE){
         C = r->numberC[0];
     }
-    //eval = evaluation_rule_line(x,y,B,C,D,E);
-    eval = 1;
+    eval = evaluation_rule_line(x,y,B,C,D,E, totalLines, totalColumns);
+    
     myOpe->ope1 = eval;
     myOpe->operator = EMPTY;
     
@@ -37,16 +37,16 @@ void build_expression(int x, int y, rule* r, Ope* myOpe){
             C = r->numberC[1];
         }
 
-        //eval = evaluation_rule_line(x,y,B,C,D,E);
+        eval = evaluation_rule_line(x,y,B,C,D,E,totalLines, totalColumns);
         eval = 1;
         myOpe->ope2 = eval;
         myOpe->operator = r->logicOperatorF;
     }
 }
 
-int check_rule(int x, int y, rule* r,Ope* myOpe){    
+int check_rule(int x, int y, rule* r,Ope* myOpe, int totalLines, int totalColumns){    
 
-    build_expression(x, y, r, myOpe);
+    build_expression(x, y, r, myOpe,totalLines, totalColumns);
 
     //parse_expression(expression, parsedExpression, expressionSize, numberLines);
 
@@ -70,21 +70,7 @@ int check_rule(int x, int y, rule* r,Ope* myOpe){
     return res;
 }
 
-char get_character(int x, int y){
-    
-    /*char array[5][5] = {
-        {'O','X','O','X','O'},
-        {'X','O','X','O','X'},
-        {'O','X','O','X','O'},
-        {'X','O','X','O','X'},
-        {'O','X','O','X','O'}
-    };*/
-
-    char array[2][2] = {{'O','X'},{'X','O'}};
-    return array[x][y];
-}
-
-
+/*
 int main(int argc, char const *argv[]){
     
     Ope *myOpe = malloc(sizeof(*myOpe));
@@ -160,21 +146,19 @@ int main(int argc, char const *argv[]){
 
     for(int x = 1; x <= X; x = x + 1){
         for (int y = 0; y < Y; y = y + 1){
-           if(current_rule->charA == get_character(x,y)){
-                while(tmp->nxt != NULL){
+            while(tmp->nxt != NULL){
+                if(current_rule->charA == get_character(x,y)){
                     if(check_rule(x,y,tmp->rule,myOpe) == 1){
                         printf("YES !\n");
                         isApplied = 1;
                     }
                     tmp = tmp->nxt;
                 }
-                printf("YES !\n");
             }
-            printf("YES !\n");
 
         }
     }
 
     return 0;
 }
-
+*/

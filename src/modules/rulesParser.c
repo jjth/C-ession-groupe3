@@ -12,7 +12,7 @@
 #define XSTR(s) STR(s)
 
 
-void ask_rules(){
+llist* ask_rules(){
 	// intean to enter multiple rules
 	int enterRules = TRUE;
 	// int logicOperatorUse = FALSE;
@@ -123,6 +123,8 @@ void ask_rules(){
 
 		cptRules++;
 	}
+
+	return listRules;
 }
 
 LogicStructure parse_logic_structure(int response){

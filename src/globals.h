@@ -47,14 +47,24 @@ enum ErrorType {
     ERROR_MEMORY_ALLOCATION
 };
 
+#if defined(WIN32) || defined(_WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
+char *strsep(char **stringp, const char *delim);
+#endif
+
+typedef int SOCKET;
 typedef struct {
     ErrorType id;
     char* message;
 } error;
 
-#if defined(WIN32) || defined(_WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
-char *strsep(char **stringp, const char *delim);
-#endif
+typedef struct {
+    int connected;
+    error err;
+    SOCKET socket;
+} NetworkClientConnection;
+
+NetworkClientConnection conn_pair;
+NetworkClientConnection conn_impair;
 
 char* prepare_for_send(CommandType type, char* data);
 CommandType get_command(char* string);

@@ -1,4 +1,4 @@
-#include "../rulesParser.h"
+#include "rulesParser.h"
 typedef struct Ope Ope;
 struct Ope {
     int ope1;
@@ -6,6 +6,5 @@ struct Ope {
     int operator;
 };
 
-void build_expression(int x, int y, rule* r, Ope* myOpe);
-int check_rule(int x, int y, rule* r,Ope* myOpe);
-char get_character(int x, int y);
+void build_expression(int x, int y, rule* r, Ope* myOpe, int totalLines, int totalColumns);
+int check_rule(int x, int y, rule* r,Ope* myOpe, int totalLines, int totalColumns);

@@ -6,7 +6,8 @@ By Julien Couillard
 
 Role : prototypes of the functions of the parser of rules.
 */
-
+#ifndef RULES_PARSER_H
+#define RULES_PARSER_H
 typedef enum LogicStructure LogicStructure;
 typedef enum LogicOperator LogicOperator;
 
@@ -48,7 +49,7 @@ struct llist {
 };
 
 // main function
-void ask_rules();
+llist* ask_rules();
 
 // list manipulation 
 void add_at_the_end(llist* list, int id, rule* rule, int color);
@@ -68,3 +69,4 @@ char *str_lower (char* string);
 void print_rule_fr(element *element);
 char* translate_logic_struc(LogicStructure logicStructure);
 char* translate_logic_operator(LogicOperator logicOperator);
+#endif

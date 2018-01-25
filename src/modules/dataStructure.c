@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include "../globals.h"
+#include "client.h"
+
 ListingLine *initialisationLine() {
     ListingLine *listingLine = malloc(sizeof(*listingLine));
     listingLine->first = NULL;
@@ -269,7 +272,7 @@ void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c){
         current = current->next;
     }
 }
-int getNeighbors(ListingLine *mylist,int nbLine,int nbColunmTotal,int yValue,int xValue,int distance,char target){
+int getNeighbors(int nbLine,int nbColunmTotal,int yValue,int xValue,int distance,char target){
     // TODO DÉPLACER DANS CENTRAL
     // VIRER MYLIST NBLINE CONNU DANS CENTRAL COLUMN AUSSI 
     // RESTE PROVIENS DE LA REGLE 
@@ -278,60 +281,77 @@ int getNeighbors(ListingLine *mylist,int nbLine,int nbColunmTotal,int yValue,int
     int cptT = 0;
     char tmp = ' ';
 
+    NetworkClientConnection conn_first;
+    NetworkClientConnection conn_second;
+
     for (y=distance; y > 0 ;y--){ 
-        for (x = distance; x > 0 ; x--){ 
+        for (x = distance; x > 0 ; x--){
+            if ((xValue+x)%2 == 0) conn_first = conn_pair;
+            else conn_first = conn_impair;
+
+            if ((xValue-x)%2 == 0) conn_second = conn_pair;
+            else conn_second = conn_impair;
             //printf("loop %d %d \n",x,y);
             //  TODO COMPARER XVALUE + X  / -X À MODULO 2 POUR SAVOIR A QUI ENVOYÉ 
             if((xValue+x < nbColunmTotal) && (yValue+y <= nbLine)){
                 //printf("1-> %d %d %d %d %c\n",x,y,xValue+x, yValue+y,getCharacter(mylist,yValue+y,xValue+x));
                 //TODO ENVOI MSG
-                tmp = getCharacter(mylist,yValue+y,xValue+x);
+                tmp = get_char_from(conn_first, xValue+x, yValue+y);
                 if(tmp == target){ cptT++; }
             }
             if((xValue-x >= 0) && (yValue+y <= nbLine)){
                 //printf("2-> %d %d %c\n",xValue-x, yValue+y,getCharacter(mylist,yValue+y,xValue-y));
-                tmp = getCharacter(mylist,yValue+y,xValue-x);
+                tmp = get_char_from(conn_second, xValue-x, yValue+y);
                 if(tmp == target){ cptT++; }
             }
             if((xValue+x < nbColunmTotal) && (yValue-y > 0)){
                 //printf("3-> %d %d %c\n",xValue+x, yValue-x,getCharacter(mylist,yValue-y,xValue+x));
-                tmp = getCharacter(mylist,yValue-y,xValue+x);
+                tmp = get_char_from(conn_first, xValue+x, yValue-y);
                 if(tmp == target){ cptT++; }
             }
             if((xValue-x >= 0) && (yValue-y > 0)){
                 //printf("4-> %d %d %c\n",xValue-x, yValue-y,getCharacter(mylist,yValue-y,xValue-x));
-                tmp = getCharacter(mylist,yValue-y,xValue-x);
+                tmp = get_char_from(conn_second, xValue-x, yValue-y);
                 if(tmp == target){ cptT++; }
             }
         }
     }
     //printf("debug -> %d distance: %d \n",cptT, distance );
     for(x=distance;x > 0;x--){
+        if ((xValue+x)%2 == 0) conn_first = conn_pair;
+        else conn_first = conn_impair;
+
+        if ((xValue-x)%2 == 0) conn_second = conn_pair;
+        else conn_second = conn_impair;
+
         if((xValue+x < nbColunmTotal) && (xValue+x <= xValue+distance)){
             //printf("55-> %d %d %c\n",xValue+x,yValue,getCharacter(mylist,yValue,xValue+x) );
-            tmp = getCharacter(mylist,yValue,xValue+x);
+            tmp = get_char_from(conn_first, xValue+x, yValue);
             if(tmp == target){ cptT += 1; }
         }
         
         if((xValue-x >= 0) && (xValue-x >= xValue-distance)){
             //printf("555-> %d %d %c\n",xValue-x,yValue,getCharacter(mylist,yValue,xValue-x) );
-            tmp = getCharacter(mylist,yValue,xValue-x);
+            tmp = get_char_from(conn_second, xValue-x, yValue);
             if(tmp == target){ cptT += 1; }
         }
-
     }
     //printf("debug1 -> %d distance: %d \n",cptT, distance );
     //printf("test\n");
+
+    if ((xValue)%2 == 0) conn_first = conn_pair;
+    else conn_first = conn_impair;
+
     for(y=distance;y> 1;y--){
         if((yValue-y > 0) && (yValue-y >= yValue-y)){
             //printf("66-> %d %d %c\n",xValue,yValue-y,getCharacter(mylist,yValue-y,xValue) );
-            tmp = getCharacter(mylist,yValue-y,xValue);
+            tmp = get_char_from(conn_first, xValue, yValue-y);
             if(tmp == target){ cptT += 1; }
         }
         
         if((yValue+y <= nbLine) && (yValue+y <= yValue+y)){
             //printf("666-> %d %d %c\n",xValue,yValue-y,getCharacter(mylist,yValue-y,xValue) );
-            tmp = getCharacter(mylist,yValue+y,xValue);        
+            tmp = get_char_from(conn_first, xValue, yValue+y);     
             if(tmp == target){ cptT += 1; }
         }
 

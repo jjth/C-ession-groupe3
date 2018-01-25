@@ -100,6 +100,7 @@ char* receive_data(NetworkClientConnection conn, int size) {
     if (size > 0) {
         char* buffer = malloc(sizeof(char*)*size);
 
+        // TODO: pourquoi ca bloque ici:
         if((n = recv(conn.socket, buffer, size, 0)) < 0){
             perror("recv()");
             return "\0";
@@ -145,6 +146,6 @@ char* set_new_cycle(NetworkClientConnection conn) {
     if (err.id != ERROR_NONE) {
         return 0;
     } else {
-        return receive_data(conn, 1);
+        return receive_data(conn, 2);
     }
 }
