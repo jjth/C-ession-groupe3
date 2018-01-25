@@ -28,7 +28,7 @@ void build_expression(int x, int y, rule* r, Ope* myOpe){
     myOpe->ope1 = eval;
     myOpe->operator = EMPTY;
     
-    if (r->logicOperatorF[0] != EMPTY){
+    if (r->logicOperatorF != EMPTY){
         B = r->logicStructureB[1];
         D = r->charD[1];
         E = r->numberE[1];
@@ -40,7 +40,7 @@ void build_expression(int x, int y, rule* r, Ope* myOpe){
         //eval = evaluation_rule_line(x,y,B,C,D,E);
         eval = 0;
         myOpe->ope2 = eval;
-        myOpe->operator = r->logicOperatorF[0];
+        myOpe->operator = r->logicOperatorF;
     }
 }
 
