@@ -211,17 +211,51 @@ int main(int argc, char const *argv[])
                 printf("Impossible d'ouvrir ce fichier. %s\n", fileRead.err.message);
 
             }
-
-            // OU CHEMIN DU FICHIER A CHARGER
         }
     }
 
     printf("Taille de la matrice: [%dx%d]\n", matrixSize[0], matrixSize[1]);
+
     // TODO:
     // Demander les rules (rulesParser)
     ask_rules();
 
-    // Algo final de remplacement
-    // & display de Chaka
+    char continueRunning = 'o';
+    int currentCycle = 0;
+    int numberOfCycles = 1;
+
+    printf("Voulez-vous faire défiler manuellement le temps ? (O/N) : ");
+    char c = 'x';
+    
+    while (c != 'o' && c != 'O' && c != 'n' && c!= 'N')
+        c = scanfChar();
+
+    if (c == 'o' || c == 'O') {
+        numberOfCycles = 1;
+    } else {
+        printf("Combien de cycles voulez-vous passer ? ");
+
+        int i = -1;
+        
+        while (i < 1) i = scanfInt();
+
+        numberOfCycles = i;
+    }
+
+    printf("\nVous avez choisi %d cycle(s).\n", numberOfCycles);
+        
+    while (continueRunning == 'o' || continueRunning == 'O') {
+        currentCycle = 0;
+        while(currentCycle <= numberOfCycles) {
+            // Algo final de remplacement
+            // & display de Chaka
+
+            currentCycle++;
+        }
+
+        printf("\nContinuer ? (O/N) ");
+        continueRunning = scanfChar();
+    }
+        
 	return 0;
 }
