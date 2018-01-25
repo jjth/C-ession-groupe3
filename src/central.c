@@ -250,6 +250,13 @@ int main(int argc, char const *argv[])
             // Algo final de remplacement
             // & display de Chaka
 
+            char* a = set_new_cycle(conn_pair);
+            char* b = set_new_cycle(conn_impair);
+
+            if(strcmp(a,b) == 0 && strcmp(a,"OK") != 0) {
+                printf("Un cycle à été détecté à T%s", a);
+                return 0;
+            }
             currentCycle++;
         }
 

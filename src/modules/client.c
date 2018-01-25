@@ -138,3 +138,13 @@ int get_color_from(NetworkClientConnection conn, int x, int y) {
         return (int) data[0];
     }
 }
+
+char* set_new_cycle(NetworkClientConnection conn) {
+    error err = send_to_network(conn, prepare_for_send(CMD_TIME_NEW, ""));
+
+    if (err.id != ERROR_NONE) {
+        return 0;
+    } else {
+        return receive_data(conn, 1);
+    }
+}
