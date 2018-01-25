@@ -101,11 +101,13 @@ char* receive_data(NetworkClientConnection conn, int size) {
         char* buffer = malloc(sizeof(char*)*size);
 
         // TODO: pourquoi ca bloque ici:
+        printf("LAAAAAAAAAAAAAA");
         if((n = recv(conn.socket, buffer, size, 0)) < 0){
             perror("recv()");
             return "\0";
         }
-        pintf(buffer);
+        printf("\n%d\n",strlen(buffer));
+        printf("buffer : %s\n", buffer);
         return buffer;
     } else {
         return "\0";

@@ -10,6 +10,7 @@
 int globalCptTime = 0;
 int globalCptLine = 0;
 int globalSizeLine = 0;
+ModuleType typeModule;
 
 ListingTi *myTi;
 ListingLine* current_matrix;
@@ -40,7 +41,10 @@ void app(int port, ModuleType module){
 	char buffer[BUF_SIZE];
 
 	ListingLine *myListing = initialisationLine();
-    if(module == MODULE_PAIR) globalCptLine = 2;
+	typeModule = module;
+    if(module == MODULE_PAIR){
+    	globalCptLine = 2;
+    }
 	else globalCptLine = 1;
     displayListingValue(myListing,4);
 
@@ -151,14 +155,14 @@ int read_client(SOCKET* sock, char *buffer){
 				write_client(*sock, "OK");
 			} else {
 				printf("[CLIENT] LOLPASOK\n");
+				printf("état de la matrice sur : %d\n", typeModule);
+				displayListingValue(current_matrix,globalSizeLine);
 				addTi(myTi, globalCptTime, current_matrix);
 				printf("[CLIENT] NEW2\n");
 				globalCptTime++;
 				sprintf(tmpString, "%d", is);
 				write_client(*sock, tmpString);
-			}
-
-			// créer un nouveau T et mettre en queue du prèc 
+			} 
 			break;
 		case CMD_UNKNOWN : 
 			// TODO 

@@ -273,9 +273,11 @@ int main(int argc, char const *argv[])
                 }
             }
 
+            printf("BONJOURCHAKA 1\n");
             char* a = set_new_cycle(conn_pair);
+            printf("BONJOURCHAKA\n");
             char* b = set_new_cycle(conn_impair);
-printf("BONJOURCHAKA\n");
+
             if(strcmp(a,b) == 0 && strcmp(a,"OK") != 0) {
                 printf("Un cycle à été détecté à T%s", a);
                 return 0;
