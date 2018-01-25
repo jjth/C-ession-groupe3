@@ -292,10 +292,8 @@ int getNeighbors(int nbLine,int nbColunmTotal,int yValue,int xValue,int distance
             if ((xValue-x)%2 == 0) conn_second = conn_pair;
             else conn_second = conn_impair;
             //printf("loop %d %d \n",x,y);
-            //  TODO COMPARER XVALUE + X  / -X À MODULO 2 POUR SAVOIR A QUI ENVOYÉ 
             if((xValue+x < nbColunmTotal) && (yValue+y <= nbLine)){
                 //printf("1-> %d %d %d %d %c\n",x,y,xValue+x, yValue+y,getCharacter(mylist,yValue+y,xValue+x));
-                //TODO ENVOI MSG
                 tmp = get_char_from(conn_first, xValue+x, yValue+y);
                 if(tmp == target){ cptT++; }
             }

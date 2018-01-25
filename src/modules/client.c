@@ -105,7 +105,7 @@ char* receive_data(NetworkClientConnection conn, int size) {
             perror("recv()");
             return "\0";
         }
-
+        pintf(buffer);
         return buffer;
     } else {
         return "\0";

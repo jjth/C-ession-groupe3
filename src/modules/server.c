@@ -94,7 +94,6 @@ int init_connection(int port){
 }
 
 int read_client(SOCKET* sock, char *buffer){
-	// TODO : A REVOIR DANS LE SWITCH
 	int n = 0;
 	CommandType cmd;
 	char tmpString[15] = "\0";

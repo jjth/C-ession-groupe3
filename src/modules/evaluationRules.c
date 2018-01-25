@@ -7,8 +7,6 @@
 
 int evaluation_rule_line(int x, int y, LogicStructure logicStructure, int numberOccurences, char charFounded, int distance, int totalNUMBERofLINES, int totalNUMBERofCOLUMNS){	
 	int resTab = getNeighbors(totalNUMBERofLINES, totalNUMBERofCOLUMNS,x,y,distance,charFounded);
-	// TODO: ajouter ListingLine en paramètre
-	// TODO POUR CHAKA ET ROMAIN
 	int eval = 0;
 	switch (logicStructure) {
 		case OPERATOR_AT_LEAST :

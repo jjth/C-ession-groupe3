@@ -93,7 +93,6 @@ int main(int argc, char const *argv[])
     /////////  & "impair" modules.
     //////////////////////////
 
-    // TODO: stocker nbLignes & nbColonnes
     int pairConnectionOK = FALSE;
     int impairConnectionOK = FALSE;
 
@@ -146,8 +145,6 @@ int main(int argc, char const *argv[])
     ///////// 
     //////////////////////////
 
-    // TODO: SCANF: LIGNE PAR LIGNE:
-    // 
     int* matrixSize;
 
     char useFile = 'v';
@@ -217,8 +214,6 @@ int main(int argc, char const *argv[])
 
     printf("Taille de la matrice: [%dx%d]\n", matrixSize[0], matrixSize[1]);
 
-    // TODO:
-    // Demander les rules (rulesParser)
     llist* rules = ask_rules();
 
     char continueRunning = 'o';
