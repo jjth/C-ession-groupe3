@@ -24,7 +24,7 @@ void build_expression(int x, int y, rule* r, Ope* myOpe){
         C = r->numberC[0];
     }
     //eval = evaluation_rule_line(x,y,B,C,D,E);
-    eval = 0;
+    eval = 1;
     myOpe->ope1 = eval;
     myOpe->operator = EMPTY;
     
@@ -38,7 +38,7 @@ void build_expression(int x, int y, rule* r, Ope* myOpe){
         }
 
         //eval = evaluation_rule_line(x,y,B,C,D,E);
-        eval = 0;
+        eval = 1;
         myOpe->ope2 = eval;
         myOpe->operator = r->logicOperatorF;
     }
@@ -93,34 +93,84 @@ int main(int argc, char const *argv[]){
     myOpe->ope2 = -1;
     myOpe->operator = -1;
 
+    llist* listRules = malloc(sizeof(llist));
+    
 
     rule* current_rule = malloc(sizeof(rule));
+
      
     current_rule->logicStructureB = malloc(sizeof(LogicStructure)*2);
     current_rule->numberC = malloc(sizeof(int)*2);
     current_rule->charD = malloc(sizeof(char)*2);
     current_rule->numberE = malloc(sizeof(int)*2);
-    current_rule->logicOperatorF = malloc(sizeof(int)*1);
+    //current_rule->logicOperatorF = malloc(sizeof(LogicOperator));
 
     current_rule->charA = 'X';  
     current_rule->logicStructureB[0] = OPERATOR_EXACTLY;
     current_rule->numberC[0] = 1;
     current_rule->charD[0] = 'O';
     current_rule->numberE[0] = 1;
-    current_rule->logicOperatorF[0] = EMPTY;
+    current_rule->logicOperatorF = EMPTY;
     current_rule->charG = 'O';
+
+    rule* current_rule2 = malloc(sizeof(rule));
+    
+     
+    current_rule2->logicStructureB = malloc(sizeof(LogicStructure)*2);
+    current_rule2->numberC = malloc(sizeof(int)*2);
+    current_rule2->charD = malloc(sizeof(char)*2);
+    current_rule2->numberE = malloc(sizeof(int)*2);
+    //current_rule2->logicOperatorF = malloc(sizeof(LogicOperator));
+
+    current_rule2->charA = 'X';  
+    current_rule2->logicStructureB[0] = OPERATOR_EXACTLY;
+    current_rule2->numberC[0] = 1;
+    current_rule2->charD[0] = 'O';
+    current_rule2->numberE[0] = 1;
+    current_rule2->logicOperatorF = EMPTY;
+    current_rule2->charG = 'O';
+
+    
+
+    element* elem1 = malloc(sizeof(elem1));
+    element* elem2 = malloc(sizeof(elem2));
+
+
+    elem1->id = 1;
+    elem1->rule = current_rule;
+    elem1->color = "rouge";
+    elem1->nxt = elem2;
+
+
+    elem2->id = 2;
+    elem2->rule = current_rule2;
+    elem2->color = "rouge";
+    elem2->nxt = NULL;
+
+    
+    listRules->first = elem1;
+
+    element *tmp=listRules->first;
+    //tmp = listRules->first;
 
     int X = 2;
     int Y = 2;
 
+
+
     for(int x = 1; x <= X; x = x + 1){
         for (int y = 0; y < Y; y = y + 1){
-            if(current_rule->charA == get_character(x,y)){
-                if(check_rule(x,y,current_rule,myOpe) == 1){
-                    printf("YES !\n");
-                    isApplied = 1;
+           if(current_rule->charA == get_character(x,y)){
+                while(tmp->nxt != NULL){
+                    if(check_rule(x,y,tmp->rule,myOpe) == 1){
+                        printf("YES !\n");
+                        isApplied = 1;
+                    }
+                    tmp = tmp->nxt;
                 }
+                printf("YES !\n");
             }
+            printf("YES !\n");
 
         }
     }

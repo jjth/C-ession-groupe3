@@ -1,4 +1,4 @@
-#include "rulesParser.h"
+#include "../rulesParser.h"
 typedef struct Ope Ope;
 struct Ope {
     int ope1;
