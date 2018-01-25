@@ -37,4 +37,5 @@ NetworkClientConnection connect_client(const char* ip, int port);
 void deinit_client();
 error send_to_network(NetworkClientConnection conn, char* line);
 error send_line_to_network(NetworkClientConnection conn, char* line);
+char* set_new_cycle(NetworkClientConnection conn);
 #endif /* guard */

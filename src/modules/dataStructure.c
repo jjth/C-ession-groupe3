@@ -175,7 +175,6 @@ int deleteALine(ListingLine *listingLine, int id){
 void displayListingValue(ListingLine *listingLine, int size){
 	int compteur = 0;
     int compteurLine = 0;
-    int compteurColor = 0;
     int i = 0;
     char **tabLine = malloc(sizeof(*tabLine)*SIZE_STACK);
     if (listingLine == NULL){
@@ -203,9 +202,7 @@ void displayListingValue(ListingLine *listingLine, int size){
     }
 }
 void displayListingColor(ListingLine *listingLine, int size){
-    int compteur = 0;
     int compteurLine = 0;
-    int i = 0;
     int **tabLine = malloc(sizeof(*tabLine)*SIZE_STACK);
     if (listingLine == NULL){
         exit(EXIT_FAILURE);
@@ -249,7 +246,6 @@ int getCharacterColor(ListingLine *listingLine, int idLine,int idColor){
     return -1;
 }
 void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c){
-	int size = 0;
 	if (listingLine == NULL){
         exit(EXIT_FAILURE);
     }
@@ -262,7 +258,6 @@ void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c){
     }
 }
 void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c){
-    int size = 0;
     if (listingLine == NULL){
         exit(EXIT_FAILURE);
     }

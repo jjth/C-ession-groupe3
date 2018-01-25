@@ -11,7 +11,8 @@ int globalCptTime = 0;
 int globalCptLine = 0;
 int globalSizeLine = 0;
 
-ListingLine* current_line;
+ListingTi *myTi;
+ListingLine* current_matrix;
 
 void init(void){
 #if defined(WIN32) || defined(WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
@@ -24,7 +25,8 @@ void init(void){
    }
 #endif
 
-	current_line = initialisationLine();
+	myTi = initialisationTi();
+	current_matrix = initialisationLine();
 }
 
 void end(void){
@@ -128,7 +130,7 @@ int read_client(SOCKET* sock, char *buffer){
 				sizeLine = strlen(get_recv_data(buffer));
 				globalSizeLine = sizeLine;
 			}
-			addALine(current_line, globalSizeLine,globalCptLine,get_recv_data(buffer));
+			addALine(current_matrix, globalSizeLine,globalCptLine,get_recv_data(buffer));
 			globalCptLine+=2;
 			break;
 		case CMD_RESET :
@@ -136,27 +138,36 @@ int read_client(SOCKET* sock, char *buffer){
 			break;
 		case CMD_GET_CHAR : 
 			data = str_split(get_recv_data(buffer));
-			result_char = getCharacter(current_line,atoi(data[0]), atoi(data[1]));
+			result_char = getCharacter(current_matrix,atoi(data[0]), atoi(data[1]));
 
 			tmpString[0] = result_char;
 			write_client(*sock, tmpString);
 			break;
 		case CMD_SET_CHAR : 
 			data = str_split(get_recv_data(buffer));		
-			setCharacter(current_line,atoi(data[0]), atoi(data[1]), data[2][0]);
+			setCharacter(current_matrix,atoi(data[0]), atoi(data[1]), data[2][0]);
 			break;
 		case CMD_GET_COLOR : 
  			data = str_split(get_recv_data(buffer));
-			result_color = getCharacterColor(current_line, atoi(data[0]),atoi(data[1]));
+			result_color = getCharacterColor(current_matrix, atoi(data[0]),atoi(data[1]));
 			sprintf(tmpString, "%d", result_color);
 			write_client(*sock, tmpString);
 			break;
 		case CMD_SET_COLOR : 
 			data = str_split(get_recv_data(buffer));
-			setCharacterColor(current_line,atoi(data[0]),atoi(data[1]), atoi(data[2]));
+			setCharacterColor(current_matrix,atoi(data[0]),atoi(data[1]), atoi(data[2]));
 			break;
 		case CMD_TIME_NEW : 
-			globalCptTime++;
+			int is = isCycle(myTi, current_matrix);
+			if (is == -1) {
+				write_client(*sock, "OK");
+			} else {
+				addTi(myTi, globalCptTime, current_matrix);
+				globalCptTime++;
+				sprintf(tmpString, "%d", is);
+				write_client(*sock, tmpString);
+			}
+
 			// créer un nouveau T et mettre en queue du prèc 
 			break;
 		case CMD_UNKNOWN : 
