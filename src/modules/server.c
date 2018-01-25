@@ -11,6 +11,7 @@ int globalCptTime = 0;
 int globalCptLine = 0;
 int globalSizeLine = 0;
 
+ListingLine* current_line;
 
 void init(void){
 #if defined(WIN32) || defined(WIN32) || (defined(CYGWIN_) && !defined(_WIN32))
@@ -22,6 +23,8 @@ void init(void){
 	  exit(EXIT_FAILURE);
    }
 #endif
+
+	current_line = initialisationLine();
 }
 
 void end(void){
@@ -76,7 +79,6 @@ void app(int port, ModuleType module){
 	}
 }
 
-
 int init_connection(int port){
 	SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
 	SOCKADDR_IN sin = { 0 };
@@ -106,7 +108,8 @@ int init_connection(int port){
 int read_client(SOCKET* sock, char *buffer){
 	// TODO : A REVOIR DANS LE SWITCH
 	int n = 0;
-	char* cmd;
+	CommandType cmd;
+	char tmpString[15] = "\0";
 	char** data;
 	int sizeLine = 0;
 	char result_char;
@@ -125,7 +128,7 @@ int read_client(SOCKET* sock, char *buffer){
 				sizeLine = strlen(get_recv_data(buffer));
 				globalSizeLine = sizeLine;
 			}
-			addALine(??, globalSizeLine,globalCptLine,get_recv_data(buffer));
+			addALine(current_line, globalSizeLine,globalCptLine,get_recv_data(buffer));
 			globalCptLine+=2;
 			break;
 		case CMD_RESET :
@@ -133,21 +136,24 @@ int read_client(SOCKET* sock, char *buffer){
 			break;
 		case CMD_GET_CHAR : 
 			data = str_split(get_recv_data(buffer));
-			result_char = getCharacter(??,atoi(data[0]), atoi(data[1]));
-			write_client(sock, result_char);
+			result_char = getCharacter(current_line,atoi(data[0]), atoi(data[1]));
+
+			tmpString[0] = result_char;
+			write_client(*sock, tmpString);
 			break;
-		case CMD_SET_CHAR, : 
+		case CMD_SET_CHAR : 
 			data = str_split(get_recv_data(buffer));		
-			setCharacter(??,atoi(data[0]), atoi(data[1]), data[2]);
+			setCharacter(current_line,atoi(data[0]), atoi(data[1]), data[2][0]);
 			break;
 		case CMD_GET_COLOR : 
  			data = str_split(get_recv_data(buffer));
-			result_color = getCharacterColor(??, atoi(data[0]),atoi(data[1]));
-			write_client(sock, itoa(result_color));
+			result_color = getCharacterColor(current_line, atoi(data[0]),atoi(data[1]));
+			sprintf(tmpString, "%d", result_color);
+			write_client(*sock, tmpString);
 			break;
-		case CMD_SET_COLOR, : 
+		case CMD_SET_COLOR : 
 			data = str_split(get_recv_data(buffer));
-			setCharacterColor(??,atoi(data[0]),atoi(data[1]), atoi(data[2]));
+			setCharacterColor(current_line,atoi(data[0]),atoi(data[1]), atoi(data[2]));
 			break;
 		case CMD_TIME_NEW : 
 			globalCptTime++;
