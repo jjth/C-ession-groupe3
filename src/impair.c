@@ -56,6 +56,7 @@ int main(int argc, char **argv){
     if (conf_fatal_error == TRUE) {
         return -1;
     }
+
 	init();
 	
 	app(conf.client.port, MODULE_IMPAIR);

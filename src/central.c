@@ -244,7 +244,7 @@ int main(int argc, char const *argv[])
         currentCycle = 0;
         while(currentCycle <= numberOfCycles) {
             Ope *myOpe = malloc(sizeof(*myOpe));
-            int isApplied = 0;
+            //int isApplied = 0;
             myOpe->ope1 = -1;
             myOpe->ope2 = -1;
             myOpe->operator = -1;
@@ -265,7 +265,7 @@ int main(int argc, char const *argv[])
                             if(check_rule(i,o,tmp->rule,myOpe,matrixSize[0], matrixSize[1]) == 1){
                                 printf("YES !\n");
                                 // APPLY RULE
-                                isApplied = 1;
+                                //isApplied = 1;
                             }
                             tmp = tmp->nxt;
                         }

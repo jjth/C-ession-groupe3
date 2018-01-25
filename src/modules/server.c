@@ -54,7 +54,8 @@ void app(int port, ModuleType module){
 
 	while(1) {
 		int csock = accept(sock, (SOCKADDR *)&csin, &sinsize);
-		printf("[-] Nouvelle connection\n");
+		//printf("[-] APP PORT NC: %d - %d, sock: %d\n", port, module, sock);
+		printf("[-] Nouvelle connection - module %d\n", module);
 		/* what is the new maximum fd ? */
 		//max = csock > max ? csock : max;
 
@@ -66,7 +67,7 @@ void app(int port, ModuleType module){
 				break;
 			} 
 
-			write_client(csock, "Ok serv 1");
+			//write_client(csock, "Ok serv 1");
 		}
 	}
 }
@@ -112,6 +113,7 @@ int read_client(SOCKET* sock, char *buffer){
 	}
 	buffer[n] = 0;
 	int is;
+	printf("état de la matrice sur : %d\n", typeModule);
 	// printf("%s \n", buffer);
 	cmd = get_command(buffer);
 	switch(cmd){
@@ -148,17 +150,12 @@ int read_client(SOCKET* sock, char *buffer){
 			setCharacterColor(current_matrix,atoi(data[0]),atoi(data[1]), atoi(data[2]));
 			break;
 		case CMD_TIME_NEW : 
-			printf("[CLIENT] NEW\n");
 			is = isCycle(myTi, current_matrix);
 			if (is == -1) {
-				printf("[CLIENT] LOLOK\n");
 				write_client(*sock, "OK");
 			} else {
-				printf("[CLIENT] LOLPASOK\n");
-				printf("état de la matrice sur : %d\n", typeModule);
 				displayListingValue(current_matrix,globalSizeLine);
 				addTi(myTi, globalCptTime, current_matrix);
-				printf("[CLIENT] NEW2\n");
 				globalCptTime++;
 				sprintf(tmpString, "%d", is);
 				write_client(*sock, tmpString);
