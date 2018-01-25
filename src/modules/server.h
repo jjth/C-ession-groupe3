@@ -30,7 +30,7 @@ typedef struct in_addr IN_ADDR;
 
 void init(void);
 void end(void);
-void app(int port);
+void app(int port, ModuleType module);
 int init_connection(int port);
 int read_client(SOCKET* sock, char *buffer);
 void write_client(SOCKET sock, const char *buffer);
