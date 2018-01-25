@@ -93,7 +93,6 @@ int main(int argc, char const *argv[])
     /////////  & "impair" modules.
     //////////////////////////
 
-    // TODO: stocker nbLignes & nbColonnes
     int pairConnectionOK = FALSE;
     int impairConnectionOK = FALSE;
 
@@ -146,8 +145,6 @@ int main(int argc, char const *argv[])
     ///////// 
     //////////////////////////
 
-    // TODO: SCANF: LIGNE PAR LIGNE:
-    // 
     int* matrixSize;
 
     char useFile = 'v';
@@ -217,8 +214,6 @@ int main(int argc, char const *argv[])
 
     printf("Taille de la matrice: [%dx%d]\n", matrixSize[0], matrixSize[1]);
 
-    // TODO:
-    // Demander les rules (rulesParser)
     llist* rules = ask_rules();
 
     char continueRunning = 'o';
@@ -249,7 +244,7 @@ int main(int argc, char const *argv[])
         currentCycle = 0;
         while(currentCycle <= numberOfCycles) {
             Ope *myOpe = malloc(sizeof(*myOpe));
-            int isApplied = 0;
+            //int isApplied = 0;
             myOpe->ope1 = -1;
             myOpe->ope2 = -1;
             myOpe->operator = -1;
@@ -270,7 +265,7 @@ int main(int argc, char const *argv[])
                             if(check_rule(i,o,tmp->rule,myOpe,matrixSize[0], matrixSize[1]) == 1){
                                 printf("YES !\n");
                                 // APPLY RULE
-                                isApplied = 1;
+                                //isApplied = 1;
                             }
                             tmp = tmp->nxt;
                         }
@@ -278,9 +273,11 @@ int main(int argc, char const *argv[])
                 }
             }
 
+            printf("BONJOURCHAKA 1\n");
             char* a = set_new_cycle(conn_pair);
+            printf("BONJOURCHAKA\n");
             char* b = set_new_cycle(conn_impair);
-printf("BONJOURCHAKA\n");
+
             if(strcmp(a,b) == 0 && strcmp(a,"OK") != 0) {
                 printf("Un cycle à été détecté à T%s", a);
                 return 0;

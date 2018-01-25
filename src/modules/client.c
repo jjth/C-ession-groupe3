@@ -100,12 +100,13 @@ char* receive_data(NetworkClientConnection conn, int size) {
     if (size > 0) {
         char* buffer = malloc(sizeof(char*)*size);
 
-        // TODO: pourquoi ca bloque ici:
+        // ERROR: Impair won't answer, but why ?
         if((n = recv(conn.socket, buffer, size, 0)) < 0){
             perror("recv()");
             return "\0";
         }
 
+        printf("buffer : %s\n", buffer);
         return buffer;
     } else {
         return "\0";
