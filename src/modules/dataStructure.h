@@ -10,33 +10,30 @@ struct Line {
     Line *next;
 };
 
-typedef struct Ti Ti;
-struct Ti {
-	int id;
-	Line* line;
-	Ti *next;
-};
-
 typedef struct ListingLine ListingLine;
 struct ListingLine {
     Line *first;
 };
 
+
+typedef struct Ti Ti;
+struct Ti {
+	int id;
+	ListingLine* matrix;
+	Ti *next;
+};
 typedef struct ListingTi ListingTi;
 struct ListingTi {
     Ti *first;
 };
 
-typedef struct stack stack;
-struct stack{
-	int top;
-	int size;
-	char* array;
-};
-
 ListingLine *initialisationLine();
+ListingTi *initialisationTi();
 void addALine(ListingLine *listingLine, int size, int id, char *str);
+void AddLineQueue(ListingLine *listingLine, int size, int id, char *str);
+void addTi(ListingTi *myListingTi, int id, ListingLine* matrix);
 int deleteALine(ListingLine *listingLine, int id);
+int compare2matrix(ListingLine *myList1,ListingLine *myList2);
 void displayListingValue(ListingLine *listingLine, int size);
 void displayListingColor(ListingLine *listingLine, int size);
 char getCharacter(ListingLine *listingLine, int idLine,int idCharacter);
@@ -44,9 +41,5 @@ void setCharacter(ListingLine *listingLine, int idLine,int idCharacter,char c);
 void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c);
 int getCharacterColor(ListingLine *listingLine, int idLine,int idColor);
 int getNeighbors(ListingLine *myListing,int nbLine,int nbColunm,int x,int y,int d,char t);
-
-struct stack* create_stack(int size);
-int isFull(struct stack* st);
-int isEmpty(struct stack* st);
-void push(struct stack* st, char element);
-char pop(struct stack* st);
+ListingLine *createCopy(ListingLine *listingLine, int size);
+int isCycle(ListingTi *myListTi, ListingLine *myListingLine);

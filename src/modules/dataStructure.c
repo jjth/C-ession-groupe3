@@ -5,9 +5,34 @@
 #include <string.h>
 ListingLine *initialisationLine() {
     ListingLine *listingLine = malloc(sizeof(*listingLine));
+    listingLine->first = NULL;
     return listingLine;
 }
 
+ListingTi *initialisationTi() {
+    ListingTi *listingTi = malloc(sizeof(*listingTi));
+    listingTi->first = NULL;
+    return listingTi;
+}
+void addTi(ListingTi *myListingTi, int id, ListingLine* matrix){
+    Ti *new = malloc(sizeof(*new));
+    if (myListingTi == NULL || new == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }else {
+        
+        new->id = id;
+        new->matrix = matrix;
+        
+    }
+    if(myListingTi->first == NULL){
+        new->next = NULL;
+    }else{
+        new->next = myListingTi->first;
+        
+    }
+    myListingTi->first = new;
+}
 void addALine(ListingLine *listingLine, int size, int id, char *str){
     int cnt;
     Line *new = malloc(sizeof(*new));
@@ -15,7 +40,7 @@ void addALine(ListingLine *listingLine, int size, int id, char *str){
     {
         exit(EXIT_FAILURE);
     }else {
-        if(id == 1){
+        if(listingLine == NULL){
             new->next = NULL;
         }else{
             new->next = listingLine->first;
@@ -35,7 +60,86 @@ void addALine(ListingLine *listingLine, int size, int id, char *str){
         new->next = NULL;
     }
 }
-
+void AddLineQueue(ListingLine *listingLine, int size, int id, char *str){
+    int cnt;
+    Line *new = malloc(sizeof(*new));
+    Line *tmp = malloc(sizeof(*tmp));
+    if (listingLine == NULL || new == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }else {
+        new->next = NULL;
+        new->id = id;
+        new->colors = malloc(sizeof(int)*size);
+        for (cnt = 0; cnt < size; cnt++){
+            new->colors[cnt]= RESET;
+        }
+        new->line = malloc(sizeof(char)*size);
+        new->line = strdup(str);
+        /*for (cnt = 0; cnt < size; cnt++){
+           new->line[cnt] = str[cnt];
+        }*/
+        
+        if(listingLine->first == NULL){
+            listingLine->first = new;
+        }else {
+            tmp = listingLine->first;
+            while(tmp->next != NULL){
+                tmp = tmp->next;
+            }
+        }
+        tmp->next = new;
+    }
+}
+ListingLine *createCopy(ListingLine *oldLine, int size){
+    ListingLine *newListing = malloc(sizeof(*newListing));
+    if (oldLine == NULL){
+        exit(EXIT_FAILURE);
+    }
+    Line *current = oldLine->first;
+    while (current != NULL){
+        //printf("%d\n",current->id );
+        AddLineQueue(newListing, size, current->id, current->line);
+        current = current->next;
+    }
+    return newListing;
+}
+int compare2matrix(ListingLine *myList1,ListingLine *myList2){
+    Line *tmp1 = malloc(sizeof(*tmp1));
+    Line *tmp2 = malloc(sizeof(*tmp2));
+    if (myList1 == NULL || myList2 == NULL){
+        exit(EXIT_FAILURE);
+    }else{
+        tmp1=myList1->first;
+        tmp2=myList2->first;
+        while(tmp1->next != NULL){
+            if(strcmp(tmp1->line,tmp2->line) != 0){
+                //printf("%s %s\n", tmp1->line,tmp2->line);
+                return 0;
+            }
+            tmp1 = tmp1->next;
+            tmp2 = tmp2->next;
+        }
+    }
+    return 1;
+}
+int isCycle(ListingTi *myListTi, ListingLine *myListingLine){
+    int cnt = -11;
+    Ti *tmp = malloc(sizeof(*tmp));
+    if(myListTi == NULL || myListingLine == NULL){
+        exit(EXIT_FAILURE);
+    }else{
+        tmp=myListTi->first;
+        while(tmp != NULL){
+            cnt = compare2matrix(tmp->matrix,myListingLine);
+            if(cnt){
+                return tmp->id;
+            }
+            tmp = tmp->next;
+        }
+    }
+    return -1;
+}
 int deleteALine(ListingLine *listingLine, int id){
 	Line *previous = NULL;
     Line *current = NULL;
@@ -239,34 +343,4 @@ int getNeighbors(ListingLine *mylist,int nbLine,int nbColunmTotal,int yValue,int
     }
     //printf("debug2 -> %d distance: %d \n",cptT, distance );
     return cptT;
-}
-struct stack* create_stack(int size){
-    struct stack* st = (struct stack*) malloc(sizeof(struct stack));
-    st->size = size;
-    st->top = -1;
-    st->array = (char*)malloc(st->size * sizeof(char));
-    return st;
-}
-
-int isFull(struct stack* st){
-    return st->top == st->size -1;
-}
-
-int isEmpty(struct stack* st){
-    return st->top == -1;
-}
-
-void push(struct stack* st, char element){
-    if(isFull(st)){
-        return;
-    }
-    st->array[++st->top] = element;
-    //printf("%d pushed !\n", element);
-}
-
-char pop(struct stack* st){
-    if (isEmpty(st)){
-        return -1;
-    }
-    return st->array[st->top--];
 }
