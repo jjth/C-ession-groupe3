@@ -275,6 +275,9 @@ void setCharacterColor(ListingLine *listingLine, int idLine,int idColor,int c){
     }
 }
 int getNeighbors(ListingLine *mylist,int nbLine,int nbColunmTotal,int yValue,int xValue,int distance,char target){
+    // TODO DÉPLACER DANS CENTRAL
+    // VIRER MYLIST NBLINE CONNU DANS CENTRAL COLUMN AUSSI 
+    // RESTE PROVIENS DE LA REGLE 
     int x = 0;
     int y = 0;
     int cptT = 0;
@@ -283,8 +286,10 @@ int getNeighbors(ListingLine *mylist,int nbLine,int nbColunmTotal,int yValue,int
     for (y=distance; y > 0 ;y--){ 
         for (x = distance; x > 0 ; x--){ 
             //printf("loop %d %d \n",x,y);
+            //  TODO COMPARER XVALUE + X  / -X À MODULO 2 POUR SAVOIR A QUI ENVOYÉ 
             if((xValue+x < nbColunmTotal) && (yValue+y <= nbLine)){
                 //printf("1-> %d %d %d %d %c\n",x,y,xValue+x, yValue+y,getCharacter(mylist,yValue+y,xValue+x));
+                //TODO ENVOI MSG
                 tmp = getCharacter(mylist,yValue+y,xValue+x);
                 if(tmp == target){ cptT++; }
             }

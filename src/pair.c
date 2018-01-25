@@ -60,7 +60,7 @@ int main(int argc, char **argv){
     }
 	init();
 	
-	app(conf.client.port);
+	app(conf.client.port, MODULE_PAIR);
 
 	end();
 

@@ -38,11 +38,11 @@ int* ask_lines(NetworkClientConnection* conn_pair, NetworkClientConnection* conn
                 conn_temp = conn_impair;
             }
 
-            error err = send_to_network(*conn_temp, line);
+            error err = send_line_to_network(*conn_temp, line);
 
             while (err.id != ERROR_NONE) {
                 printf("Impossible d'envoyer cette ligne: %s\n", err.message);
-                err = send_to_network(*conn_temp, line);
+                err = send_line_to_network(*conn_temp, line);
             }
             cpt += 1;
         } else if (strlen(line) == 0) {
