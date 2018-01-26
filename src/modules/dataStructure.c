@@ -284,13 +284,16 @@ int getNeighbors(int nbLine,int nbColunmTotal,int yValue,int xValue,int distance
     NetworkClientConnection conn_first;
     NetworkClientConnection conn_second;
 
+    conn_first = conn_pair;
+    conn_second = conn_pair;
+    
     for (y=distance; y > 0 ;y--){ 
         for (x = distance; x > 0 ; x--){
-            if ((xValue+x)%2 == 0) conn_first = conn_pair;
+            /*if ((xValue+x)%2 == 0) conn_first = conn_pair;
             else conn_first = conn_impair;
 
             if ((xValue-x)%2 == 0) conn_second = conn_pair;
-            else conn_second = conn_impair;
+            else conn_second = conn_impair;*/
             //printf("loop %d %d \n",x,y);
             if((xValue+x < nbColunmTotal) && (yValue+y <= nbLine)){
                 //printf("1-> %d %d %d %d %c\n",x,y,xValue+x, yValue+y,getCharacter(mylist,yValue+y,xValue+x));
@@ -316,11 +319,11 @@ int getNeighbors(int nbLine,int nbColunmTotal,int yValue,int xValue,int distance
     }
     //printf("debug -> %d distance: %d \n",cptT, distance );
     for(x=distance;x > 0;x--){
-        if ((xValue+x)%2 == 0) conn_first = conn_pair;
+        /*if ((xValue+x)%2 == 0) conn_first = conn_pair;
         else conn_first = conn_impair;
 
         if ((xValue-x)%2 == 0) conn_second = conn_pair;
-        else conn_second = conn_impair;
+        else conn_second = conn_impair;*/
 
         if((xValue+x < nbColunmTotal) && (xValue+x <= xValue+distance)){
             //printf("55-> %d %d %c\n",xValue+x,yValue,getCharacter(mylist,yValue,xValue+x) );
@@ -337,8 +340,8 @@ int getNeighbors(int nbLine,int nbColunmTotal,int yValue,int xValue,int distance
     //printf("debug1 -> %d distance: %d \n",cptT, distance );
     //printf("test\n");
 
-    if ((xValue)%2 == 0) conn_first = conn_pair;
-    else conn_first = conn_impair;
+    /*if ((xValue)%2 == 0) conn_first = conn_pair;
+    else conn_first = conn_impair;*/
 
     for(y=distance;y> 1;y--){
         if((yValue-y > 0) && (yValue-y >= yValue-y)){

@@ -84,7 +84,7 @@ error send_to_network(NetworkClientConnection conn, char* line) {
         perr->id = errno;
         perr->message = strerror(errno);
     } else {
-        printf("Command sent.\n");
+        //printf("Command sent.\n");
     }
 
     return *perr;
@@ -96,7 +96,7 @@ error send_line_to_network(NetworkClientConnection conn, char* line) {
 
 char* receive_data(NetworkClientConnection conn, int size) {
     int n = 0;
-
+    size = 256;
     if (size > 0) {
         char* buffer = malloc(sizeof(char*)*size);
 
@@ -106,10 +106,38 @@ char* receive_data(NetworkClientConnection conn, int size) {
             return "\0";
         }
 
-        printf("buffer : %s\n", buffer);
+        //printf("buffer : %s\n", buffer);
         return buffer;
     } else {
         return "\0";
+    }
+}
+
+int set_color_from(NetworkClientConnection conn, int x, int y, int c) {
+    char command[50];
+
+    sprintf(command, "%d;%d;%c", x, y,c);
+    error err = send_to_network(conn, prepare_for_send(CMD_SET_COLOR, command));
+
+    if (err.id != ERROR_NONE) {
+        return 0;
+    } else {
+        char* data = receive_data(conn, 1);
+        return data[0];
+    }
+}
+
+char set_char_from(NetworkClientConnection conn, int x, int y, char c) {
+    char command[50];
+
+    sprintf(command, "%d;%d;%c", x, y,c);
+    error err = send_to_network(conn, prepare_for_send(CMD_SET_CHAR, command));
+
+    if (err.id != ERROR_NONE) {
+        return 0;
+    } else {
+        char* data = receive_data(conn, 1);
+        return data[0];
     }
 }
 
@@ -119,10 +147,12 @@ char get_char_from(NetworkClientConnection conn, int x, int y) {
     sprintf(command, "%d;%d", x, y);
     error err = send_to_network(conn, prepare_for_send(CMD_GET_CHAR, command));
 
+    printf("GET_CHAR_FROM\n");
     if (err.id != ERROR_NONE) {
         return 0;
     } else {
         char* data = receive_data(conn, 1);
+        printf("RECV: '%s'\n", data);
         return data[0];
     }
 }

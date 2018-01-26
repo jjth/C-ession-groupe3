@@ -11,7 +11,7 @@ endif
 all:	Central Pair Impair
 
 Central:	src/central.c
-	$(CC) -o build/Central lib/libini/ini.c src/modules/configparser.c src/modules/dataStructure.c src/modules/colors.c src/globals.c src/modules/client.c src/modules/applyRules.c src/modules/evaluationRules.c src/modules/readLines.c src/modules/rulesParser.c src/modules/readFile.c src/modules/scanf.c src/central.c $(CFLAGS)
+	$(CC) -o build/Central lib/libini/ini.c src/modules/configparser.c src/modules/dataStructure.c src/modules/colors.c src/globals.c src/modules/client.c src/modules/displayMatrix.c src/modules/applyRules.c src/modules/evaluationRules.c src/modules/readLines.c src/modules/rulesParser.c src/modules/readFile.c src/modules/scanf.c src/central.c $(CFLAGS)
 
 Pair:		src/pair.c
 	$(CC) -o build/pair/Pair lib/libini/ini.c src/modules/configparser.c src/modules/dataStructure.c src/modules/colors.c src/globals.c src/modules/client.c src/modules/server.c src/pair.c  $(CFLAGS)

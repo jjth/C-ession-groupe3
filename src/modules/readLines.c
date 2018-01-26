@@ -52,7 +52,7 @@ int* ask_lines(NetworkClientConnection* conn_pair, NetworkClientConnection* conn
         }
     }
 
-    matrixSize[0] = cpt;
+    matrixSize[0] = cpt-1;
     matrixSize[1] = nbColumn;
 
     return matrixSize;

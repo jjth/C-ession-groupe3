@@ -113,7 +113,7 @@ int read_client(SOCKET* sock, char *buffer){
 	}
 	buffer[n] = 0;
 	int is;
-	printf("état de la matrice sur : %d\n", typeModule);
+	//printf("état de la matrice sur : %d\n", typeModule);
 	// printf("%s \n", buffer);
 	cmd = get_command(buffer);
 	switch(cmd){
@@ -132,6 +132,7 @@ int read_client(SOCKET* sock, char *buffer){
 			data = str_split(get_recv_data(buffer));
 			result_char = getCharacter(current_matrix,atoi(data[0]), atoi(data[1]));
 
+			printf("CLIENT: '%c'\n", result_char);
 			tmpString[0] = result_char;
 			write_client(*sock, tmpString);
 			break;

@@ -33,4 +33,6 @@ error send_line_to_network(NetworkClientConnection conn, char* line);
 char* set_new_cycle(NetworkClientConnection conn);
 char get_char_from(NetworkClientConnection conn, int x, int y);
 int get_color_from(NetworkClientConnection conn, int x, int y);
+int set_color_from(NetworkClientConnection conn, int x, int y, int c);
+char set_char_from(NetworkClientConnection conn, int x, int y, char c);
 #endif /* guard */

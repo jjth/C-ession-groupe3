@@ -11,6 +11,7 @@
 #include "modules/readFile.h"
 #include "modules/scanf.h"
 #include "modules/applyRules.h"
+#include "modules/displayMatrix.h"
 
 #define LINE_SIZE 5
 #define NB_LINE 5
@@ -97,8 +98,9 @@ int main(int argc, char const *argv[])
     int impairConnectionOK = FALSE;
 
     conn_pair = connect_client(conf.pair.ip, conf.pair.port);
-    conn_impair = connect_client(conf.pair.ip, conf.pair.port);
-    
+    //conn_impair = connect_client(conf.pair.ip, conf.pair.port);
+    conn_impair = conn_pair;
+
     pairConnectionOK = conn_pair.connected;
     impairConnectionOK = conn_impair.connected;
 
@@ -128,8 +130,8 @@ int main(int argc, char const *argv[])
             }
 
             if (impairConnectionOK == FALSE) {
-                conn_impair = connect_client(conf.impair.ip, conf.impair.port);
-            
+                //conn_impair = connect_client(conf.impair.ip, conf.impair.port);
+                conn_impair = conn_pair;
                 if (conn_impair.connected == TRUE) {
                     printf("\nModule central connecté au module impair.\n");
                     impairConnectionOK = TRUE;
@@ -202,7 +204,6 @@ int main(int argc, char const *argv[])
                     }
 
                 } while(line != NULL && strcmp(line, "") != 0);
-
                 matrixSize[0] = fileRead.column_count;
                 matrixSize[1] = i-1;
             } else {
@@ -242,7 +243,7 @@ int main(int argc, char const *argv[])
         
     while (continueRunning == 'o' || continueRunning == 'O') {
         currentCycle = 0;
-        while(currentCycle <= numberOfCycles) {
+        while(currentCycle < numberOfCycles) {
             Ope *myOpe = malloc(sizeof(*myOpe));
             //int isApplied = 0;
             myOpe->ope1 = -1;
@@ -253,33 +254,35 @@ int main(int argc, char const *argv[])
             //get_char_from
             // Algo final de remplacement
             // & display de Chaka
-            printf("BONJOUR\n");
+            //printf("BONJOUR\n");
             for (int i = 0; i<matrixSize[0]; i++) {
                 for (int o = 0; o<matrixSize[1]; o++) {
                     if ((i % 2) == 0) conn_temp = conn_pair;
                     else conn_temp = conn_impair;
 
                     element *tmp=rules->first;
-                    while(tmp->nxt != NULL){
+                    while(tmp != NULL){
                         if(tmp->rule->charA == get_char_from(conn_temp, i, o)){
                             if(check_rule(i,o,tmp->rule,myOpe,matrixSize[0], matrixSize[1]) == 1){
-                                printf("YES !\n");
-                                // APPLY RULE
-                                //isApplied = 1;
+                                set_char_from(conn_temp, i, o, tmp->rule->charG);
+                                set_color_from(conn_temp, i, o, tmp->color);
                             }
+
                             tmp = tmp->nxt;
                         }
                     }
                 }
             }
 
-            printf("BONJOURCHAKA 1\n");
+            display_matrix(matrixSize[0], matrixSize[1]);
+            //printf("BONJOURCHAKA 1\n");
             char* a = set_new_cycle(conn_pair);
-            printf("BONJOURCHAKA\n");
-            char* b = set_new_cycle(conn_impair);
+            //printf("BONJOURCHAKA\n");
+            //char* b = set_new_cycle(conn_impair);
 
-            if(strcmp(a,b) == 0 && strcmp(a,"OK") != 0) {
-                printf("Un cycle à été détecté à T%s", a);
+            //if(strcmp(a,b) == 0 && strcmp(a,"OK") != 0) {
+            if (strcmp(a, "OK") != 0) {
+                printf("Un cycle à été détecté à T%s\n", a);
                 return 0;
             }
             currentCycle++;
